@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import { IconHome } from '@tabler/icons-react-native';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -18,8 +19,8 @@ export default function TabLayout() {
 			<Tabs.Screen
 				name='index'
 				options={{
-					title: 'Test',
-					tabBarIcon: ({ color, focused }) => <TabBarIcon name={focused ? 'albums' : 'albums-outline'} color={color} />,
+					title: 'Overview',
+					tabBarIcon: ({ color, focused }) => <IconHome color={color} size={24} />,
 				}}
 			/>
 			<Tabs.Screen
