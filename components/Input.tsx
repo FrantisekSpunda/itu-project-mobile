@@ -15,7 +15,6 @@ type InputPros = ViewProps & {
 
 export const Input = ({ name, label, icon, value, onChange, onBlur, error, ...rest }: InputPros) => {
 	const [isFocused, setIsFocused] = useState(!!value);
-	console.log(!!value, isFocused);
 	const ref = useRef<TextInput>(null);
 
 	useEffect(() => {

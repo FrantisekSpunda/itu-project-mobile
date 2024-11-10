@@ -10,6 +10,7 @@ export default function Contacts() {
 	useEffect(() => {
 		getContact(1).then((data) => setContacts(data || []));
 	}, []);
+
 	return (
 		<Layout>
 			<Heading text='Přehled' showBack={false} showSearch={false} />
