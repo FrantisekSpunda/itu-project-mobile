@@ -1,6 +1,7 @@
 import { getColor, tw } from '@/utils/utils.tailwind';
 import React, { JSXElementConstructor, ReactElement, useCallback, useRef, useState } from 'react';
 import { TextInput, Text, View, TouchableOpacity, Keyboard } from 'react-native';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 type InputPros = {
 	name: string;

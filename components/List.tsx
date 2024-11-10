@@ -15,7 +15,7 @@ export const List = ({ label, children, buttons, ...rest }: ListProps) => {
 			{!!label && <ThemedText style={tw('mB3')}>{label}</ThemedText>}
 			<View style={tw('roundedLg', 'bgWhite', 'wFull')}>
 				{children}
-				{!!buttons && <View style={tw('p3', 'flexRow', 'justifyEnd')}>{buttons}</View>}
+				{!!buttons && <View style={tw('p3', 'flexRow', 'justifyEnd', { gap: 12 })}>{buttons}</View>}
 			</View>
 		</View>
 	);
