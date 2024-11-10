@@ -1,5 +1,5 @@
 import { IconNode } from '@tabler/icons-react-native';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
 import { ThemedText } from './ThemedText';
 import { tw } from '@/utils/utils.tailwind';
 import React, { JSXElementConstructor, ReactElement } from 'react';
@@ -7,7 +7,7 @@ import { TouchableHighlight } from 'react-native-gesture-handler';
 
 type ButtonType = 'default' | 'filled';
 
-type ButtonProps = {
+type ButtonProps = TouchableOpacityProps & {
 	label?: string;
 	icon?: ReactElement<any, string | JSXElementConstructor<any>>;
 	type?: ButtonType;

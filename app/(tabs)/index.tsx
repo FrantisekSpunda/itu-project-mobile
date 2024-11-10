@@ -1,8 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconExternalLink, IconPlus } from '@tabler/icons-react-native';
 import { Layout, Heading, MainDept, Button, List, ContactItem, ExpenseItem, SettlementItem } from '@/components';
+import { getContact, getContacts, getExpenses } from '@/api';
+import { Contact, Expense } from '@/api/types';
 
 export default function Overview() {
+	const [expenses, setExpenses] = useState<Expense[]>([]);
+	const [contacts, setContacts] = useState<(Contact & { amount: number })[]>([]);
+
+	useEffect(() => {
+		getExpenses(1).then(setExpenses);
+		getContact(1).then((data) => setContacts(data || []));
+	}, []);
+
 	return (
 		<Layout>
 			<Heading text='Přehled' showBack={false} />
@@ -16,11 +26,9 @@ export default function Overview() {
 					</>
 				}
 			>
-				<ContactItem user={{ firstName: 'Matej', lastName: 'Krenek' }} amount={-432} />
-				<ContactItem user={{ firstName: 'Pepa', lastName: 'Zdepa' }} amount={-213} />
-				<ContactItem user={{ firstName: 'Matej', lastName: 'Popleta' }} amount={0} />
-				<ContactItem user={{ firstName: 'Honimír', lastName: 'Krátký' }} amount={34} />
-				<ContactItem user={{ firstName: 'Onldřich', lastName: 'Mačeta' }} amount={54} />
+				{contacts.map((contact) => (
+					<ContactItem user={{ firstName: contact.first_name || '', lastName: contact.last_name || '' }} amount={contact.amount} />
+				))}
 			</List>
 			<List
 				label='Výdaje'
@@ -30,12 +38,17 @@ export default function Overview() {
 					</>
 				}
 			>
-				<ExpenseItem label='Lidl - nákup' payer={{ firstName: 'Matej', lastName: 'Krenek' }} amount={-432} />
-				<SettlementItem payer={{ firstName: 'Pepa', lastName: 'Zdepa' }} amount={123} />
-				<ExpenseItem label='Lidl - nákup' payer={{ firstName: 'Pepa', lastName: 'Zdepa' }} amount={-213} />
-				<ExpenseItem label='Lidl - nákup' payer={{ firstName: 'Matej', lastName: 'Popleta' }} amount={0} />
-				<ExpenseItem label='Lidl - nákup' payer={{ firstName: 'Honimír', lastName: 'Krátký' }} amount={34} />
-				<ExpenseItem label='Lidl - nákup' payer={{ firstName: 'Onldřich', lastName: 'Mačeta' }} amount={54} />
+				{expenses.map((expense) =>
+					expense.type == 'expense' ? (
+						<ExpenseItem
+							label={expense.title || ''}
+							payer={{ firstName: String(expense.payer_id), lastName: '' }}
+							amount={expense.amount * (expense.payer_id == 1 ? 1 : -1)}
+						/>
+					) : (
+						<SettlementItem payer={{ firstName: String(expense.payer_id), lastName: '' }} amount={expense.amount} />
+					),
+				)}
 			</List>
 		</Layout>
 	);

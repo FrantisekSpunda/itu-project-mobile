@@ -1,7 +1,6 @@
 import { ScrollView, TouchableOpacity, View, ViewProps } from 'react-native';
 import { tw } from '@/utils/utils.tailwind';
-import { tailwind } from 'react-native-tailwindcss';
-import { TopBar } from '.';
+import { TopBar } from './Topbar';
 import { IconPlus } from '@tabler/icons-react-native';
 import { useNavigation } from 'expo-router';
 

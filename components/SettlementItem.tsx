@@ -3,7 +3,7 @@ import { View, ViewProps } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { getSign } from '@/utils/utils.number';
 import { IconArrowNarrowRight, IconCash, IconCreditCard, IconShoppingCart } from '@tabler/icons-react-native';
-import { Badge } from '.';
+import { Badge } from './Badge';
 
 type SettlementItemProps = ViewProps & {
 	payer: {
