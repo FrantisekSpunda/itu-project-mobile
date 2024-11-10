@@ -2,9 +2,12 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { IconHome } from '@tabler/icons-react-native';
+import { IconBasket, IconHome, IconUserDollar, IconPlus } from '@tabler/icons-react-native';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { tailwind } from 'react-native-tailwindcss';
+import { getColor, tw } from '@/utils/utils.tailwind';
+import { TouchableOpacity } from 'react-native';
 
 export default function TabLayout() {
 	const colorScheme = useColorScheme();
@@ -12,29 +15,32 @@ export default function TabLayout() {
 	return (
 		<Tabs
 			screenOptions={{
-				tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+				tabBarActiveTintColor: getColor('Primary'),
 				headerShown: false,
+				tabBarInactiveTintColor: getColor('Black'),
+				tabBarStyle: tw('bgWhite', 'borderWhite', 'shadowNone'),
+				tabBarShowLabel: false,
 			}}
 		>
 			<Tabs.Screen
 				name='index'
 				options={{
 					title: 'Overview',
-					tabBarIcon: ({ color, focused }) => <IconHome color={color} size={24} />,
+					tabBarIcon: ({ color }) => <IconHome color={color} size={24} />,
 				}}
 			/>
 			<Tabs.Screen
-				name='home'
+				name='contacts'
 				options={{
 					title: 'Home',
-					tabBarIcon: ({ color, focused }) => <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />,
+					tabBarIcon: ({ color }) => <IconUserDollar color={color} size={24} />,
 				}}
 			/>
 			<Tabs.Screen
-				name='explore'
+				name='expenses'
 				options={{
 					title: 'Explore',
-					tabBarIcon: ({ color, focused }) => <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />,
+					tabBarIcon: ({ color }) => <IconBasket color={color} size={24} />,
 				}}
 			/>
 		</Tabs>
