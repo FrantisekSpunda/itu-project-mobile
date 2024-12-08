@@ -42,7 +42,7 @@ Layout.login = ({ children, ...rest }: LayoutProps) => {
       <View>
         <View style={tw('wFull', 'bgBlue', 'absolute', 'left0', 'top0', { height: 320 })} />
         <ScrollView contentContainerStyle={tw('flexCol', 'p4', 'wFull', 'minHFull', { gap: 8 })}>
-          <ThemedText type="title" style={tw('textWhite', 'textCenter', 'mT10', 'mB24')}>
+          <ThemedText type="title" style={tw('textWhite', 'textCenter', 'mT10', 'mB20')}>
             Dluhy mezi přáteli přehledně 🏃‍💸
           </ThemedText>
           {children}

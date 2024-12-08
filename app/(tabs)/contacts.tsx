@@ -2,9 +2,12 @@ import { getContact } from '@/api'
 import { Contact } from '@/api/types'
 import { Heading, MainDept, List, ContactItem, ExpenseItem, Button, Layout } from '@/components'
 import { IconExternalLink, IconPlus } from '@tabler/icons-react-native'
+import { useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 
 export default function Contacts() {
+  const { push } = useRouter()
+
   const [contacts, setContacts] = useState<(Contact & { amount: number })[]>([])
 
   useEffect(() => {
@@ -15,7 +18,7 @@ export default function Contacts() {
     <Layout>
       <Heading text="Všichni dlužníci" showBack={false} showSearch={false} />
       <MainDept />
-      <List label="Dlužníci" buttons={<Button type="transparent" label="Přidat" icon={<IconPlus />} />}>
+      <List label="Dlužníci" buttons={<Button type="transparent" label="Přidat" icon={<IconPlus />} onPress={() => push('/add_contact')} />}>
         {contacts.map((contact, i) => (
           <ContactItem key={i} user={{ firstName: contact.first_name || '', lastName: contact.last_name || '' }} amount={contact.amount} />
         ))}

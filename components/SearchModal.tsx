@@ -32,8 +32,11 @@ export const SearchModal = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
     >
       <Modal transparent visible={store.modal.search} animationType="slide" onRequestClose={() => setStore('modal.search', false)}>
-        <View onTouchStart={() => setStore('modal.search', false)} style={tw('absolute', 'wFull', 'hFull', 'bgGray', { top: 0, left: 0, opacity: 0.6 })}></View>
-        <Box style={tw('absolute', 'hFull', { top: spaceFromTop })}>
+        <View
+          onTouchStart={() => setStore('modal.search', false)}
+          style={tw('wFull', 'bgGray', { top: 0, left: 0, opacity: 0.6, height: spaceFromTop })}
+        ></View>
+        <Box style={tw('hFull')}>
           <Formik initialValues={{ search: '' }} onSubmit={handleSubmit}>
             {({ handleChange, handleBlur }) => (
               <>

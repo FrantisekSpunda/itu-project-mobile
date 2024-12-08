@@ -38,7 +38,7 @@ export const Button = ({ label, icon, iconAfter, type, style, ...rest }: ButtonP
   const Icon = !!icon
     ? React.cloneElement(icon, {
         ...icon.props,
-        style: [...tw('textPrimary', 'm0', iconAfter ? 'mL2' : 'mR2'), typeStyles[type].icon, icon.props.style],
+        style: [...tw('textPrimary', 'm0', iconAfter ? 'mL2' : 'mR2'), ...typeStyles[type].icon, icon.props.style],
         strokeWidth: 2,
         size: typeStyles[type].iconSize,
       })

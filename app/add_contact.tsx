@@ -1,12 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { Layout, Heading, Button, Box, Input, BottomActionBar, ThemedText } from '@/components'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { Layout, Heading, Button, Box, Input, BottomActionBar, Select, SelectRef } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
-import { getProfile } from '@/api'
-import { User } from '@/api/types'
 import { useRouter } from 'expo-router'
-import { IconCheck } from '@tabler/icons-react-native'
+import { IconCheck, IconCoins, IconFilePencil, IconHeading, IconUser, IconUsers } from '@tabler/icons-react-native'
+import { TextInput, View } from 'react-native'
 
 const validationSchema = Yup.object().shape({
   first_name: Yup.string().required('Jméno je povinné').min(2, 'Jméno musí mít alespoň 2 znaky'),
@@ -17,16 +16,12 @@ const validationSchema = Yup.object().shape({
     .matches(/^\d{1,10}\/\d{4}$/, 'IBAN musí obsahovat pouze velká písmena a číslice'),
 })
 
-export default function UserProfile() {
+export default function AddExpense() {
   const { back } = useRouter()
 
-  const [user, setUser] = useState<User | null>(null)
-
-  useEffect(() => {
-    getProfile(1).then((data) => {
-      setUser(data)
-    })
-  }, [])
+  const priceRef = useRef<TextInput>(null)
+  const descriptionRef = useRef<TextInput>(null)
+  const payersRef = useRef<SelectRef>(null)
 
   const handleSubmit = (values: any) => {
     console.log('Form Data: ', values)
@@ -35,16 +30,15 @@ export default function UserProfile() {
   }
 
   return (
-    <Layout>
-      <Heading text="Úprava vašeho profilu" showSearch={false} />
-      <Box style={tw('borderBlue', { gap: 12 })}>
-        <ThemedText>Základní informace</ThemedText>
+    <Layout scrollEnabled={false}>
+      <Heading text="Přidat kontakt" showSearch={false} />
+      <Box label="Základní informace" style={tw('borderTransparent', { gap: 12 })}>
         <Formik
           initialValues={{
-            first_name: user?.first_name,
-            last_name: user?.last_name,
-            email: user?.email,
-            bank_iban: user?.bank_iban,
+            first_name: '',
+            last_name: '',
+            email: '',
+            bank_iban: '',
           }}
           enableReinitialize
           validationSchema={validationSchema}
@@ -54,7 +48,7 @@ export default function UserProfile() {
             <>
               <Input
                 name="first_name"
-                label="Vaše jméno"
+                label="Jméno"
                 value={values.first_name}
                 onChange={handleChange('first_name')}
                 onBlur={handleBlur('first_name')}
@@ -62,7 +56,7 @@ export default function UserProfile() {
               />
               <Input
                 name="last_name"
-                label="Vaše příjmení"
+                label="Příjmení"
                 value={values.last_name}
                 onChange={handleChange('last_name')}
                 onBlur={handleBlur('last_name')}
@@ -70,15 +64,16 @@ export default function UserProfile() {
               />
               <Input
                 name="email"
-                label="Váš email"
+                label="Email"
                 value={values.email}
+                inputProps={{ inputMode: 'email' }}
                 onChange={handleChange('email')}
                 onBlur={handleBlur('email')}
                 error={touched.email && errors.email}
               />
               <Input
                 name="bank_iban"
-                label="Váš bankovní účet"
+                label="Bankovní účet"
                 value={values.bank_iban}
                 onChange={handleChange('bank_iban')}
                 onBlur={handleBlur('bank_iban')}

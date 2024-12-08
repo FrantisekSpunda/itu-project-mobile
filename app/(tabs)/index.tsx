@@ -27,7 +27,7 @@ export default function Overview() {
         buttons={
           <>
             <Button type="transparent" label="Dlužníci" icon={<IconExternalLink />} onPress={() => push('/(tabs)/contacts')} />
-            <Button type="transparent" label="Přidat" icon={<IconPlus />} />
+            <Button type="transparent" label="Přidat" icon={<IconPlus />} onPress={() => push('/add_contact')} />
           </>
         }
       >

@@ -1,10 +1,12 @@
 import { tw } from '@/utils/utils.tailwind'
 import { FormikHelpers, useFormikContext } from 'formik'
-import React, { forwardRef, JSXElementConstructor, ReactElement, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import React, { forwardRef, JSXElementConstructor, ReactElement, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { TextInput, Text, View, TouchableOpacity, Keyboard, ViewProps, TextInputProps, Modal, FlatList } from 'react-native'
 import { ThemedText } from './ThemedText'
 
 type SelectOption = { label: string; value: string }
+
+export type SelectRef = View & { press?: any }
 
 type SelectProps<T extends boolean> = ViewProps & {
   name: string
@@ -14,35 +16,49 @@ type SelectProps<T extends boolean> = ViewProps & {
   multiple?: T
   value: T extends true ? string[] : string
   options: SelectOption[]
-  setValue?: FormikHelpers<any>['setFieldValue']
+  setValue: FormikHelpers<any>['setFieldValue']
   onBlur?: (params?: any) => any
   error?: any
 }
 
 export const Select = forwardRef(
-  <T extends boolean>({ name, label, icon, value, setValue, onBlur, options, multiple, error }: SelectProps<T>, globalRef: React.ForwardedRef<TextInput>) => {
-    const ref = useRef<TextInput>(null)
-
-    useImperativeHandle(globalRef, () => ref.current as TextInput)
+  <T extends boolean>({ name, label, icon, value, setValue, onBlur, options, multiple, error }: SelectProps<T>, globalRef: React.ForwardedRef<SelectRef>) => {
+    const ref = useRef<SelectRef>(null)
 
     const [optionsVisible, setOptionsVisible] = useState(false)
+    useImperativeHandle(globalRef, () => ({ ...ref.current, press: () => setOptionsVisible((prev) => !prev) }) as SelectRef)
 
     const handleSelect = (item: SelectOption) => {
-      console.log(multiple)
       if (setValue) setValue(name, multiple ? [...value, item.value] : item.value)
-      setOptionsVisible(false)
+      if (!multiple) setOptionsVisible(false)
     }
 
-    useEffect(() => {
-      console.log(!!String(value))
-    }, [value])
+    const handleRemove = (item: string) => {
+      if (multiple) {
+        setValue(
+          name,
+          (value as string[]).filter((v) => v !== item)
+        )
+      }
+    }
+
+    const optionsEdited = useMemo(() => {
+      if (multiple) {
+        const optionsFiltered = options.filter((option) => !(value as string[]).find((v) => v === option.value))
+        if (optionsFiltered.length) return optionsFiltered
+        return [{ label: 'Žádné možnosti k výběru', value: 'options-empty' }]
+      } else {
+        return options
+      }
+    }, [multiple, options, value])
 
     return (
       <View style={tw('relative')}>
         <TouchableOpacity
+          ref={ref}
           style={tw('flexRow', 'itemsCenter', 'rounded', 'border', 'borderLightGray', 'pX3')}
           onPress={() => {
-            setOptionsVisible(true)
+            setOptionsVisible((prev) => !prev)
           }}
           activeOpacity={1}
         >
@@ -58,13 +74,15 @@ export const Select = forwardRef(
               {label}
             </ThemedText>
             <View style={[...tw('pB2', 'pL0', 'textBody1', 'flexRow', 'flexWrap', { gap: 4 }), ...(value ? tw('pB3') : tw('h0', 'pB2'))]}>
-              {multiple
-                ? (value as string[]).map((v, i) => (
-                    <ThemedText type="body2" style={tw('pX2', 'pY0', 'roundedFull', 'bgLightGray', 'textBlack')} key={i}>
-                      {options.find((option) => option.value === v)?.label}
-                    </ThemedText>
-                  ))
-                : options.find((option) => option.value === value)?.label || ''}
+              {multiple ? (
+                (value as string[]).map((v, i) => (
+                  <ThemedText type="body2" style={tw('pX2', 'pY0', 'roundedFull', 'bgLightGray', 'textBlack')} key={i} onPress={() => handleRemove(v)}>
+                    {options.find((option) => option.value === v)?.label}
+                  </ThemedText>
+                ))
+              ) : (
+                <ThemedText>{options.find((option) => option.value === value)?.label || ''}</ThemedText>
+              )}
             </View>
           </View>
         </TouchableOpacity>
@@ -75,17 +93,26 @@ export const Select = forwardRef(
           </ThemedText>
         )}
         {optionsVisible && (
-          <View style={tw('flex', 'rounded', 'bgWhite', 'wFull', 'absolute', { top: 60, boxShadow: '0 10 100 -50 gray' })}>
+          <View
+            style={tw('flex', 'rounded', 'bgWhite', 'wFull', 'absolute', 'overflowHidden', 'z100', { top: 60, boxShadow: '0 10 100 -50 gray', zIndex: 100 })}
+          >
             <FlatList
               nestedScrollEnabled={true}
               scrollEnabled={false}
-              data={options}
+              data={optionsEdited}
               keyExtractor={(item) => String(item.value)}
-              renderItem={({ item, index }) => (
-                <TouchableOpacity style={tw('pX4', 'pY3', 'borderLightGray', index + 1 != options.length ? 'borderB' : {})} onPress={() => handleSelect(item)}>
-                  <ThemedText>{item.label}</ThemedText>
-                </TouchableOpacity>
-              )}
+              renderItem={({ item, index }) =>
+                item.value === 'options-empty' ? (
+                  <ThemedText style={tw('textCenter', 'pY6')}>{item.label}</ThemedText>
+                ) : (
+                  <TouchableOpacity
+                    style={tw('pX4', 'pY3', 'borderLightGray', index + 1 != options.length ? 'borderB' : {}, item.value === value ? 'bgLightGray' : 'bgWhite')}
+                    onPress={() => handleSelect(item)}
+                  >
+                    <ThemedText>{item.label}</ThemedText>
+                  </TouchableOpacity>
+                )
+              }
             />
           </View>
         )}
