@@ -9,7 +9,7 @@ import { TextInput, View } from 'react-native'
 
 const validationSchema = Yup.object().shape({})
 
-export default function AddExpense() {
+export default function ExpenseAdd() {
   const { back } = useRouter()
 
   const priceRef = useRef<TextInput>(null)
@@ -25,7 +25,7 @@ export default function AddExpense() {
   return (
     <Layout scrollEnabled={false}>
       <Heading text="Přidat výdaj" showSearch={false} />
-      <Box label="Detail Výdaje" style={tw('borderTransparent', { gap: 12 })}>
+      <Box label="Detail Výdaje" style={tw({ gap: 12 })}>
         <Formik
           initialValues={{
             title: '',
@@ -37,7 +37,7 @@ export default function AddExpense() {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ handleChange, setFieldValue, handleBlur, handleSubmit, values, errors, touched }) => (
+          {({ handleChange, setFieldValue, handleBlur, handleSubmit, values, errors, touched, dirty }) => (
             <>
               <Input
                 name="title"
@@ -91,7 +91,7 @@ export default function AddExpense() {
                 onBlur={handleBlur('description')}
                 error={touched.description && errors.description}
               />
-              <BottomActionBar>
+              <BottomActionBar show={dirty}>
                 <Button type="white" label="Uložit nedokončené" icon={<IconFilePencil />} onPress={() => handleSubmit()} />
                 <Button type="primary" label="Uložit" icon={<IconCheck />} onPress={() => handleSubmit()} />
               </BottomActionBar>

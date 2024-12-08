@@ -1,8 +1,9 @@
 import { tw } from '@/utils/utils.tailwind'
-import { View, ViewProps } from 'react-native'
+import { TouchableOpacity, View, ViewProps } from 'react-native'
 import { ThemedText } from '@/components/ThemedText'
 import { getSign } from '@/utils/utils.number'
-import { IconCreditCard, IconShoppingCart } from '@tabler/icons-react-native'
+import { IconCreditCard, IconFilePencil, IconShoppingCart } from '@tabler/icons-react-native'
+import { useRouter } from 'expo-router'
 
 type ExpenseItemProps = ViewProps & {
   type?: string
@@ -12,23 +13,26 @@ type ExpenseItemProps = ViewProps & {
   }
   label: string
   amount: number
+  draft?: boolean
 }
 
-export const ExpenseItem = ({ payer, label, amount, ...rest }: ExpenseItemProps) => {
-  const isPozitive = amount < 0
+export const ExpenseItem = ({ payer, label, amount, draft, ...rest }: ExpenseItemProps) => {
+  const { push } = useRouter()
 
   return (
-    <View {...rest} style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}>
+    <TouchableOpacity
+      {...rest}
+      style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}
+      onPress={() => (draft ? push('/expense_add') : push('/expense_detail'))}
+    >
       <View style={tw('flexRow', 'itemsCenter')}>
         <View style={tw({ width: 30, height: 30 }, 'flex', 'justifyCenter', 'itemsCenter', 'mR3')}>
-          <IconShoppingCart size={18} style={tw('textPrimary')} />
+          {!draft ? <IconShoppingCart size={18} style={tw('textPrimary')} /> : <IconFilePencil size={18} style={tw('textGray')} />}
           <View style={tw({ opacity: 0.1 }, 'absolute', 'top0', 'roundedFull', 'left0', 'wFull', 'hFull', 'bgPrimary')} />
         </View>
         <View style={tw({ gap: 4 }, 'flexRow', 'itemsBaseline')}>
           <ThemedText>{label}</ThemedText>
-          <ThemedText type="caption" style={tw()}>
-            {payer.firstName} {payer.lastName}
-          </ThemedText>
+          <ThemedText type="caption">{!draft ? `${payer.firstName} ${payer.lastName}` : 'Nedokončené'}</ThemedText>
         </View>
       </View>
       <View style={tw('flexRow', 'itemsCenter')}>
@@ -37,6 +41,6 @@ export const ExpenseItem = ({ payer, label, amount, ...rest }: ExpenseItemProps)
           {amount} Kč
         </ThemedText>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }

@@ -37,7 +37,7 @@ export const Input = forwardRef<TextInput, InputPros>(
     return (
       <View {...rest} style={tw('flexCol', 'wFull', { gap: 4 })}>
         <View
-          onTouchStart={() => {
+          onTouchEnd={() => {
             setTimeout(() => {
               ref.current?.focus()
             }, 100)

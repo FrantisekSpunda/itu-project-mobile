@@ -20,7 +20,7 @@ export const Layout = ({ scrollEnabled = true, children, ...rest }: LayoutProps)
     <View {...rest} style={tw('wFull', 'hFull', 'bgBackground', 'relative')}>
       <TopBar />
       <ScrollView
-        contentContainerStyle={tw({ rowGap: 16 }, 'flexCol', 'p4', 'wFull', 'minHFull')}
+        contentContainerStyle={tw({ rowGap: 16 }, 'flexCol', 'p4', 'pB20', 'wFull', 'minHFull')}
         scrollEnabled={scrollEnabled && Object.values(store.modal).every((v) => !v)}
       >
         {children}

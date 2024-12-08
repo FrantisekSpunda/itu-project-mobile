@@ -34,9 +34,16 @@ export default function RootLayout() {
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack screenOptions={{ animation: 'slide_from_right' }}>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="add_expense" options={{ headerShown: false }} />
-            <Stack.Screen name="add_contact" options={{ headerShown: false }} />
-            <Stack.Screen name="add_settlement" options={{ headerShown: false }} />
+
+            <Stack.Screen name="expense_add" options={{ headerShown: false }} />
+            <Stack.Screen name="expense_detail" options={{ headerShown: false }} />
+
+            <Stack.Screen name="contact_add" options={{ headerShown: false }} />
+            <Stack.Screen name="contact_detail" options={{ headerShown: false }} />
+
+            <Stack.Screen name="settlement_add" options={{ headerShown: false }} />
+            <Stack.Screen name="settlement_detail" options={{ headerShown: false }} />
+
             <Stack.Screen name="user_profile" options={{ headerShown: false }} />
             <Stack.Screen name="login" options={{ headerShown: false }} />
             <Stack.Screen name="register" options={{ headerShown: false }} />

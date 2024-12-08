@@ -1,6 +1,6 @@
 import { getExpenses } from '@/api'
 import { Expense } from '@/api/types'
-import { Badge, Button, ContactItem, ExpenseItem, Heading, Layout, List, MainDept, SettlementItem } from '@/components'
+import { Badge, Button, ContactItem, ExpenseItem, Heading, Layout, List, Widget, SettlementItem } from '@/components'
 import { tw } from '@/utils'
 import { IconExternalLink, IconPlus } from '@tabler/icons-react-native'
 import React, { useState, useEffect } from 'react'
@@ -13,9 +13,9 @@ export default function Expenses() {
     { label: 'Vyrovnání', value: 'settlements' },
   ]
 
-  const [expenses, setExpenses] = useState<Expense[]>([])
   const [filter, setFilter] = useState<(typeof filters)[0]['value']>('all')
 
+  const [expenses, setExpenses] = useState<Expense[]>([])
   useEffect(() => {
     getExpenses(1).then(setExpenses)
   }, [])
@@ -23,7 +23,7 @@ export default function Expenses() {
   return (
     <Layout>
       <Heading text="Všechny výdaje" showBack={false} />
-      <MainDept />
+      <Widget.dept dept={1340} oweYou={410} youOwe={503} />
       <View style={tw('flexRow', 'wFull', { gap: 12 })}>
         {filters.map((item, i) => (
           <Badge

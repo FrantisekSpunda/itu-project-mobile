@@ -1,13 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Layout, Heading, Button, Box, Input, BottomActionBar, ThemedText } from '@/components'
+import React, { useRef, useState } from 'react'
+import { Layout, Heading, Button, Box, Input, BottomActionBar, Select, SelectRef, Badge, List, ExpenseItem, SettlementItem, Widget } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
-import { getProfile } from '@/api'
-import { User } from '@/api/types'
 import { useRouter } from 'expo-router'
-import { IconCheck } from '@tabler/icons-react-native'
-import { TextInput } from 'react-native-gesture-handler'
+import { IconCheck, IconCreditCard } from '@tabler/icons-react-native'
+import { TextInput, View } from 'react-native'
 
 const validationSchema = Yup.object().shape({
   first_name: Yup.string().required('Jméno je povinné').min(2, 'Jméno musí mít alespoň 2 znaky'),
@@ -18,20 +16,20 @@ const validationSchema = Yup.object().shape({
     .matches(/^\d{1,10}\/\d{4}$/, 'IBAN musí obsahovat pouze velká písmena a číslice'),
 })
 
-export default function UserProfile() {
-  const { back } = useRouter()
+export default function ContactDetail() {
+  const { back, push } = useRouter()
 
-  const [user, setUser] = useState<User | null>(null)
+  const filters: { label: string; value: 'all' | 'expenses' | 'settlements' }[] = [
+    { label: 'Vše', value: 'all' },
+    { label: 'Výdaje', value: 'expenses' },
+    { label: 'Vyrovnání', value: 'settlements' },
+  ]
+
+  const [filter, setFilter] = useState<(typeof filters)[0]['value']>('all')
 
   const lastNameRef = useRef<TextInput>(null)
   const emailRef = useRef<TextInput>(null)
   const bankAccountRef = useRef<TextInput>(null)
-
-  useEffect(() => {
-    getProfile(1).then((data) => {
-      setUser(data)
-    })
-  }, [])
 
   const handleSubmit = (values: any) => {
     console.log('Form Data: ', values)
@@ -41,15 +39,15 @@ export default function UserProfile() {
 
   return (
     <Layout>
-      <Heading text="Úprava vašeho profilu" showSearch={false} />
-      <Box style={tw('borderBlue', { gap: 12 })}>
-        <ThemedText>Základní informace</ThemedText>
+      <Heading text="Detail kontaktu" showSearch={false} />
+      <Widget.dept dept={302} youOwe={123} oweYou={312} style={tw('borderBlue')} />
+      <Box label="Základní informace" style={tw('borderTransparent', { gap: 12 })}>
         <Formik
           initialValues={{
-            first_name: user?.first_name,
-            last_name: user?.last_name,
-            email: user?.email,
-            bank_iban: user?.bank_iban,
+            first_name: 'Pepa',
+            last_name: 'Zdepa',
+            email: 'pepa@tst.co',
+            bank_iban: '123123123/1231',
           }}
           enableReinitialize
           validationSchema={validationSchema}
@@ -59,7 +57,7 @@ export default function UserProfile() {
             <>
               <Input
                 name="first_name"
-                label="Vaše jméno"
+                label="Jméno"
                 value={values.first_name}
                 onChange={handleChange('first_name')}
                 onBlur={handleBlur('first_name')}
@@ -69,7 +67,7 @@ export default function UserProfile() {
               <Input
                 ref={lastNameRef}
                 name="last_name"
-                label="Vaše příjmení"
+                label="Příjmení"
                 value={values.last_name}
                 onChange={handleChange('last_name')}
                 onBlur={handleBlur('last_name')}
@@ -79,8 +77,9 @@ export default function UserProfile() {
               <Input
                 ref={emailRef}
                 name="email"
-                label="Váš email"
+                label="Email"
                 value={values.email}
+                inputProps={{ inputMode: 'email' }}
                 onChange={handleChange('email')}
                 onBlur={handleBlur('email')}
                 focusNext={() => bankAccountRef.current?.focus()}
@@ -89,20 +88,44 @@ export default function UserProfile() {
               <Input
                 ref={bankAccountRef}
                 name="bank_iban"
-                label="Váš bankovní účet"
+                label="Bankovní účet"
                 value={values.bank_iban}
-                inputProps={{ onSubmitEditing: () => handleSubmit() }}
                 onChange={handleChange('bank_iban')}
                 onBlur={handleBlur('bank_iban')}
                 error={touched.bank_iban && errors.bank_iban}
               />
-              <BottomActionBar show={dirty}>
-                <Button type="primary" label="Uložit" icon={<IconCheck />} onPress={() => handleSubmit()} />
+              <BottomActionBar show={true || dirty}>
+                {dirty ? (
+                  <Button type="primary" label="Uložit" icon={<IconCheck />} onPress={() => handleSubmit()} />
+                ) : (
+                  <Button type="white" label="Vyrovnat se" icon={<IconCreditCard />} onPress={() => push('/expense_add')} />
+                )}
               </BottomActionBar>
             </>
           )}
         </Formik>
       </Box>
+      <View style={tw('flexRow', 'wFull', { gap: 12 })}>
+        {filters.map((item, i) => (
+          <Badge
+            key={i}
+            size="medium"
+            label={item.label}
+            style={filter == item.value ? tw('bgLightBlue') : tw('bgWhite')}
+            onPress={() => setFilter(item.value)}
+          />
+        ))}
+      </View>
+      <List label="Listopad 2024">
+        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} amount={-412} />
+        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} amount={-412} />
+        <SettlementItem payer={{ firstName: 'Pepa', lastName: 'B' }} amount={1000} />
+      </List>
+      <List label="Říjen 2024">
+        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} amount={412} />
+        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} amount={412} />
+        <SettlementItem payer={{ firstName: 'Pepa', lastName: 'Špunda' }} amount={-1000} />
+      </List>
     </Layout>
   )
 }

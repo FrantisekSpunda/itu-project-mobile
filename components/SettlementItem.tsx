@@ -1,5 +1,5 @@
 import { tw } from '@/utils/utils.tailwind'
-import { View, ViewProps } from 'react-native'
+import { TouchableOpacity, View, ViewProps } from 'react-native'
 import { ThemedText } from '@/components/ThemedText'
 import { getSign } from '@/utils/utils.number'
 import { IconArrowNarrowRight, IconCash, IconCreditCard, IconShoppingCart } from '@tabler/icons-react-native'
@@ -18,10 +18,10 @@ export const SettlementItem = ({ payer, amount, ...rest }: SettlementItemProps) 
   const { push } = useRouter()
 
   return (
-    <View
+    <TouchableOpacity
       {...rest}
       style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}
-      onTouchStart={() => push('/add_settlement')}
+      onPress={() => push('/settlement_detail')}
     >
       <View style={tw('flexRow', 'itemsCenter')}>
         <View style={tw({ width: 30, height: 30 }, 'flex', 'justifyCenter', 'itemsCenter', 'mR3')}>
@@ -43,6 +43,6 @@ export const SettlementItem = ({ payer, amount, ...rest }: SettlementItemProps) 
           {amount} Kč
         </ThemedText>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }

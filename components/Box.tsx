@@ -2,7 +2,7 @@ import { tw } from '@/utils/utils.tailwind'
 import { View, ViewProps } from 'react-native'
 import { ThemedText } from './ThemedText'
 
-type BoxProps = ViewProps & {
+export type BoxProps = ViewProps & {
   label?: string
   style?: any[]
 }

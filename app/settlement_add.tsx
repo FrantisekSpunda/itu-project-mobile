@@ -1,14 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Layout, Heading, Button, Box, Input, BottomActionBar, Select, SelectRef, Badge } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
-import * as Yup from 'yup'
-import { Formik } from 'formik'
 import { useRouter } from 'expo-router'
-import { IconArrowNarrowRight, IconCheck, IconCoins, IconFilePencil, IconHeading, IconUser, IconUsers } from '@tabler/icons-react-native'
-import { TextInput, View } from 'react-native'
+import { IconArrowNarrowRight, IconCash, IconX } from '@tabler/icons-react-native'
+import { View } from 'react-native'
 import { ThemedText } from '@/components/ThemedText'
 
-export default function AddExpense() {
+export default function SettlementAdd() {
   const { back } = useRouter()
 
   const handleSubmit = () => {
@@ -35,7 +33,10 @@ export default function AddExpense() {
             <View style={tw('h40', 'w40', 'bgGray', { borderRadius: 1 })}></View>
           </View>
         </View>
-        <Button type="primary" label="Uložit" icon={<IconCheck />} onPress={() => handleSubmit()} />
+        <View style={tw('flexRow', 'justifyEnd', { gap: 8 })}>
+          <Button type="white" label="Zrušit" icon={<IconX />} onPress={() => back()} />
+          <Button type="primary" label="Označit jako zaplacené" icon={<IconCash />} onPress={() => handleSubmit()} />
+        </View>
       </Box>
     </Layout>
   )

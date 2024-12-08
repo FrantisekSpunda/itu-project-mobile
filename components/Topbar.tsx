@@ -13,14 +13,14 @@ export const TopBar = () => {
     <View style={tw('bgWhite')}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
       <View style={tw('flexRow', 'justifyBetween', 'itemsCenter', 'pY2', 'pX3', 'mT0')}>
-        <View style={tw('flexRow', { gap: 4 })} onTouchStart={() => push('/(tabs)')}>
+        <TouchableOpacity style={tw('flexRow', { gap: 4 })} onPress={() => push('/(tabs)')}>
           <ThemedText type="heading2" style={tw('textSecondary')}>
             Shared
           </ThemedText>
           <ThemedText type="heading2" style={tw('textPrimary')}>
             Fin.
           </ThemedText>
-        </View>
+        </TouchableOpacity>
 
         <View style={tw('flexRow', { gap: 12 })}>
           <TouchableOpacity style={tw('roundedFull', 'bgGray100', 'p3')} onPress={() => push('/login')}>
