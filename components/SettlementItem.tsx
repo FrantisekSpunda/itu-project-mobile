@@ -4,6 +4,7 @@ import { ThemedText } from '@/components/ThemedText'
 import { getSign } from '@/utils/utils.number'
 import { IconArrowNarrowRight, IconCash, IconCreditCard, IconShoppingCart } from '@tabler/icons-react-native'
 import { Badge } from './Badge'
+import { useRouter } from 'expo-router'
 
 type SettlementItemProps = ViewProps & {
   payer: {
@@ -14,8 +15,14 @@ type SettlementItemProps = ViewProps & {
 }
 
 export const SettlementItem = ({ payer, amount, ...rest }: SettlementItemProps) => {
+  const { push } = useRouter()
+
   return (
-    <View {...rest} style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}>
+    <View
+      {...rest}
+      style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}
+      onTouchStart={() => push('/add_settlement')}
+    >
       <View style={tw('flexRow', 'itemsCenter')}>
         <View style={tw({ width: 30, height: 30 }, 'flex', 'justifyCenter', 'itemsCenter', 'mR3')}>
           <IconCash size={18} style={tw('textGreen')} />

@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React from 'react'
 import { Layout, Heading, Button, Box, Input, BottomActionBar, Select, SelectRef } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
 import { useRouter } from 'expo-router'
-import { IconCheck, IconCoins, IconFilePencil, IconHeading, IconUser, IconUsers } from '@tabler/icons-react-native'
-import { TextInput, View } from 'react-native'
+import { IconCheck } from '@tabler/icons-react-native'
 
 const validationSchema = Yup.object().shape({
   first_name: Yup.string().required('Jméno je povinné').min(2, 'Jméno musí mít alespoň 2 znaky'),
@@ -18,10 +17,6 @@ const validationSchema = Yup.object().shape({
 
 export default function AddExpense() {
   const { back } = useRouter()
-
-  const priceRef = useRef<TextInput>(null)
-  const descriptionRef = useRef<TextInput>(null)
-  const payersRef = useRef<SelectRef>(null)
 
   const handleSubmit = (values: any) => {
     console.log('Form Data: ', values)

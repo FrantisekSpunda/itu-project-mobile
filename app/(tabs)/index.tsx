@@ -35,7 +35,7 @@ export default function Overview() {
           <ContactItem key={i} user={{ firstName: contact.first_name || '', lastName: contact.last_name || '' }} amount={contact.amount} />
         ))}
       </List>
-      <List label="Výdaje" buttons={<Button type="transparent" label="Výdaje" icon={<IconExternalLink />} onPress={() => push('/add_expense')} />}>
+      <List label="Výdaje" buttons={<Button type="transparent" label="Výdaje" icon={<IconExternalLink />} onPress={() => push('/(tabs)/expenses')} />}>
         {expenses.map((expense, i) =>
           expense.type == 'expense' ? (
             <ExpenseItem
