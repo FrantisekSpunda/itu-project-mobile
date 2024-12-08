@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Layout, Heading, Button, Box, Input, BottomActionBar } from '@/components'
+import { Layout, Heading, Button, Box, Input, BottomActionBar, ThemedText } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
@@ -36,7 +36,8 @@ export default function UserProfile() {
   return (
     <Layout>
       <Heading text="Úprava vašeho profilu" showSearch={false} />
-      <Box style={tw({ gap: 12 })}>
+      <Box style={tw('borderBlue', { gap: 12 })}>
+        <ThemedText>Základní informace</ThemedText>
         <Formik
           initialValues={{
             first_name: user?.first_name,

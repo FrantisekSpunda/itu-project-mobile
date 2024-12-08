@@ -4,6 +4,7 @@ import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
 import { useRouter } from 'expo-router'
+import { IconUser } from '@tabler/icons-react-native'
 
 const validationSchema = Yup.object().shape({
   first_name: Yup.string().required('Jméno je povinné').min(2, 'Jméno musí mít alespoň 2 znaky'),
@@ -24,15 +25,15 @@ export default function AddExpense() {
   }
 
   return (
-    <Layout>
-      <Heading text="Úprava vašeho profilu" showSearch={false} />
-      <Box style={tw('border0', { gap: 12 })}>
+    <Layout scrollEnabled={false}>
+      <Heading text="Přidat výdaj" showSearch={false} />
+      <Box style={tw('borderTransparent', { gap: 12 })}>
         <Formik
           initialValues={{
             title: '',
             price: '',
             description: '',
-            payers: undefined,
+            payers: [],
           }}
           enableReinitialize
           validationSchema={validationSchema}
@@ -51,7 +52,7 @@ export default function AddExpense() {
               <Input
                 name="price"
                 label="Cena"
-                inputProps={{ autoComplete: 'cc-number', keyboardType: 'numeric' }}
+                inputProps={{ inputMode: 'numeric' }}
                 value={values.price}
                 onChange={handleChange('price')}
                 onBlur={handleBlur('price')}
@@ -70,7 +71,8 @@ export default function AddExpense() {
                 name="payers"
                 label="Zadejte kontakt"
                 setValue={setFieldValue}
-                value={values.payers}
+                multiple
+                value={values.payers || []}
                 options={[
                   { label: 'Matěj Křenek', value: '1' },
                   { label: 'Pepa zDepa', value: '2' },

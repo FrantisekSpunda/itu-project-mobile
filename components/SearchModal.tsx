@@ -6,7 +6,7 @@ import { Formik } from 'formik'
 import { useStore } from '@/hooks'
 import { Button } from './Button'
 import { ExpenseItem } from './ExpenseItem'
-import { IconArrowLeft } from '@tabler/icons-react-native'
+import { IconArrowLeft, IconSearch } from '@tabler/icons-react-native'
 import { useEffect, useRef, useState } from 'react'
 
 export const SearchModal = () => {
@@ -37,7 +37,7 @@ export const SearchModal = () => {
           <Formik initialValues={{ search: '' }} onSubmit={handleSubmit}>
             {({ handleChange, handleBlur }) => (
               <>
-                <Input ref={ref} name="search" label="Vyhledávání" onChange={handleChange('search')} onBlur={handleBlur('search')} />
+                <Input ref={ref} name="search" label="Vyhledávání" icon={<IconSearch />} onChange={handleChange('search')} onBlur={handleBlur('search')} />
 
                 <ScrollView style={tw('h0', 'overflowHidden', 'flexCol', 'mB48', 'mT2')}>
                   <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />

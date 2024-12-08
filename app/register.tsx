@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Box, Input, Layout } from '@/components'
+import { Button, Box, Input, Layout, ThemedText } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
 import { Formik, useFormikContext } from 'formik'
@@ -33,7 +33,8 @@ export default function Register() {
 
   return (
     <Layout.login>
-      <Box style={tw('border0', { gap: 12 })}>
+      <ThemedText style={tw('textWhite')}>Registrace</ThemedText>
+      <Box style={tw('borderTransparent', { gap: 12 })}>
         <Formik initialValues={initialValues} enableReinitialize={true} validationSchema={validationSchema} onSubmit={handleSubmit}>
           {
             {

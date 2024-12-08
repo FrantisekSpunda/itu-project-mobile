@@ -2,6 +2,7 @@ import { tw } from '@/utils/utils.tailwind'
 import { useFormikContext } from 'formik'
 import React, { forwardRef, JSXElementConstructor, ReactElement, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { TextInput, Text, View, TouchableOpacity, Keyboard, ViewProps, TextInputProps } from 'react-native'
+import { ThemedText } from './ThemedText'
 
 type InputPros = ViewProps & {
   name: string
@@ -41,11 +42,12 @@ export const Input = forwardRef<TextInput, InputPros>(
               ref.current?.focus()
             }, 100)
           }}
-          style={tw('flex', 'rounded', 'border', 'borderLightGray', 'pX3')}
+          style={tw('flexRow', 'itemsCenter', 'rounded', 'border', 'borderLightGray', 'pX3')}
         >
-          {!!icon && React.cloneElement(icon, { style: tw('textPrimary', icon.props.style, 'mR2'), strokeWidth: 2, size: 18 })}
+          {!!icon && React.cloneElement(icon, { style: tw('textBlack', icon.props.style, 'mR2'), strokeWidth: 2, size: 24 })}
+
           <View style={tw('flexCol')}>
-            <Text style={[...tw('textGray', 'fontBold'), ...(filled ? tw('textCaption', { paddingTop: 6, marginBottom: -8 }) : tw('textBody1', 'pT4', 'pB0'))]}>
+            <Text style={[...tw('textGray'), ...(filled ? tw('textCaption', { paddingTop: 6, marginBottom: -8 }) : tw('textBody1', 'pT4', 'pB0'))]}>
               {label}
             </Text>
 
@@ -70,7 +72,11 @@ export const Input = forwardRef<TextInput, InputPros>(
             />
           </View>
         </View>
-        {error && <Text style={tw('textCaption', 'textRed', 'fontMedium')}>{error}</Text>}
+        {error && (
+          <ThemedText type="caption" style={tw('textRed')}>
+            {error}
+          </ThemedText>
+        )}
       </View>
     )
   }

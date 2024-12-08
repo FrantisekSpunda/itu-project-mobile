@@ -9,15 +9,20 @@ import { ThemedText } from './ThemedText'
 import { SearchModal } from './SearchModal'
 import { useStore } from '@/hooks'
 
-type LayoutProps = ViewProps & {}
+type LayoutProps = ViewProps & {
+  scrollEnabled?: boolean
+}
 
-export const Layout = ({ children, ...rest }: LayoutProps) => {
+export const Layout = ({ scrollEnabled = true, children, ...rest }: LayoutProps) => {
   const { store } = useStore()
 
   return (
     <View {...rest} style={tw('wFull', 'hFull', 'bgBackground', 'relative')}>
       <TopBar />
-      <ScrollView contentContainerStyle={tw({ rowGap: 16 }, 'flexCol', 'p4', 'wFull', 'minHFull')} scrollEnabled={Object.values(store.modal).every((v) => !v)}>
+      <ScrollView
+        contentContainerStyle={tw({ rowGap: 16 }, 'flexCol', 'p4', 'wFull', 'minHFull')}
+        scrollEnabled={scrollEnabled && Object.values(store.modal).every((v) => !v)}
+      >
         {children}
       </ScrollView>
       <BottomAddButton />
@@ -36,7 +41,7 @@ Layout.login = ({ children, ...rest }: LayoutProps) => {
       <TopBar.login />
       <View>
         <View style={tw('wFull', 'bgBlue', 'absolute', 'left0', 'top0', { height: 320 })} />
-        <ScrollView contentContainerStyle={tw({ rowGap: 16 }, 'flexCol', 'p4', 'wFull', 'minHFull')}>
+        <ScrollView contentContainerStyle={tw('flexCol', 'p4', 'wFull', 'minHFull', { gap: 8 })}>
           <ThemedText type="title" style={tw('textWhite', 'textCenter', 'mT10', 'mB24')}>
             Dluhy mezi přáteli přehledně 🏃‍💸
           </ThemedText>

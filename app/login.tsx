@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Box, Input, Layout } from '@/components'
+import { Button, Box, Input, Layout, ThemedText } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
@@ -23,7 +23,8 @@ export default function Login() {
 
   return (
     <Layout.login>
-      <Box style={tw('border0', { gap: 12 })}>
+      <ThemedText style={tw('textWhite')}>Přihlášení</ThemedText>
+      <Box style={tw('borderTransparent', { gap: 12 })}>
         <Formik
           initialValues={{
             email: '',
@@ -39,8 +40,8 @@ export default function Login() {
                 name="email"
                 label="Váš email"
                 inputProps={{
-                  autoComplete: 'email',
-                  keyboardType: 'email-address',
+                  inputMode: 'email',
+                  autoFocus: true,
                 }}
                 focusNext={() => inputRef.current?.focus()}
                 onChange={handleChange('email')}
