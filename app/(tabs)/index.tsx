@@ -21,15 +21,12 @@ export default function Overview() {
   return (
     <Layout>
       <Heading text="Přehled" showBack={false} />
-      <TouchableOpacity style={tw('roundedFull', 'bgGray100', 'p3')} onPress={() => push('/login')}>
-        <IconUser size={24} color="black" />
-      </TouchableOpacity>
       <MainDept />
       <List
         label="Dlužníci"
         buttons={
           <>
-            <Button type="transparent" label="Dlužníci" icon={<IconExternalLink />} />
+            <Button type="transparent" label="Dlužníci" icon={<IconExternalLink />} onPress={() => push('/(tabs)/contacts')} />
             <Button type="transparent" label="Přidat" icon={<IconPlus />} />
           </>
         }
@@ -38,14 +35,7 @@ export default function Overview() {
           <ContactItem key={i} user={{ firstName: contact.first_name || '', lastName: contact.last_name || '' }} amount={contact.amount} />
         ))}
       </List>
-      <List
-        label="Výdaje"
-        buttons={
-          <>
-            <Button type="transparent" label="Výdaje" icon={<IconExternalLink />} />
-          </>
-        }
-      >
+      <List label="Výdaje" buttons={<Button type="transparent" label="Výdaje" icon={<IconExternalLink />} onPress={() => push('/add_expense')} />}>
         {expenses.map((expense, i) =>
           expense.type == 'expense' ? (
             <ExpenseItem

@@ -1,19 +1,25 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react'
-import { GenericObject, NestedPaths, TypeFromPath } from '@/types'
-import { removeProperty, getProperty, merge, setProperty } from '@/utils'
-
-type initialStateKeys = keyof typeof initialState
+import { NestedPaths, TypeFromPath } from '@/types'
+import { getProperty, setProperty } from '@/utils'
 
 type StoreContextProps = {
   store: typeof initialState
-  setStore: <P extends string>(
+  setStore: <P extends NestedPaths<typeof initialState>>(
     prop: P,
     value: TypeFromPath<typeof initialState, P> | ((value: TypeFromPath<typeof initialState, P>) => TypeFromPath<typeof initialState, P>)
   ) => void
   withStore: (dispatch: (prev: typeof initialState) => typeof initialState) => void
 }
 
-const initialState = { form: { unsavedChanges: false } } // !!!! update
+const initialState = {
+  form: {
+    unsavedChanges: false,
+    bottomActionBar: [] as React.ReactNode,
+  },
+  modal: {
+    search: false,
+  },
+} // !!!! update
 
 const StoreContext = createContext<StoreContextProps>({
   store: initialState,

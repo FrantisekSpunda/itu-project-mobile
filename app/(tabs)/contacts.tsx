@@ -13,7 +13,7 @@ export default function Contacts() {
 
   return (
     <Layout>
-      <Heading text="Přehled" showBack={false} showSearch={false} />
+      <Heading text="Všichni dlužníci" showBack={false} showSearch={false} />
       <MainDept />
       <List label="Dlužníci" buttons={<Button type="transparent" label="Přidat" icon={<IconPlus />} />}>
         {contacts.map((contact, i) => (

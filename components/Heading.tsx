@@ -4,6 +4,7 @@ import { tw } from '@/utils/utils.tailwind'
 import { IconSearch, IconArrowLeft } from '@tabler/icons-react-native'
 import { useRouter } from 'expo-router'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { useStore } from '@/hooks'
 
 type HeadingProps = ViewProps & {
   text: string
@@ -13,12 +14,13 @@ type HeadingProps = ViewProps & {
 
 export const Heading = ({ text, showSearch = true, showBack = true }: HeadingProps) => {
   const { back } = useRouter()
+  const { setStore } = useStore()
 
   return (
     <View style={tw('flexRow', 'justifyBetween', 'wFull')}>
       <ThemedText type="heading1">{text}</ThemedText>
       <View style={tw('flexRow', 'itemsCenter')}>
-        {showSearch && <IconSearch size={24} style={tw('textBlack')} />}
+        {showSearch && <IconSearch size={24} style={tw('textBlack')} onPress={() => setStore('modal.search', true)} />}
         {showBack && (
           <TouchableOpacity
             onPress={() => {

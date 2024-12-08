@@ -1,14 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { IconExternalLink, IconPlus } from '@tabler/icons-react-native'
-import { Layout, Heading, UnsavedChanges, Button, Box, Input } from '@/components'
-import { ThemedText } from '@/components/ThemedText'
+import { Layout, Heading, Button, Box, Input, BottomActionBar } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
 import { getProfile } from '@/api'
 import { User } from '@/api/types'
-import { View } from 'react-native'
-import { useStore } from '@/hooks'
+import { useRouter } from 'expo-router'
 
 const validationSchema = Yup.object().shape({
   first_name: Yup.string().required('Jméno je povinné').min(2, 'Jméno musí mít alespoň 2 znaky'),
@@ -16,11 +13,11 @@ const validationSchema = Yup.object().shape({
   email: Yup.string().required('Email je povinný').email('Zadejte platný email'),
   bank_iban: Yup.string()
     .required('Bankovní účet je povinný')
-    .matches(/^[A-Z0-9]+$/, 'IBAN musí obsahovat pouze velká písmena a číslice'),
+    .matches(/^\d{1,10}\/\d{4}$/, 'IBAN musí obsahovat pouze velká písmena a číslice'),
 })
 
 export default function UserProfile() {
-  const { setStore, store } = useStore()
+  const { back } = useRouter()
 
   const [user, setUser] = useState<User | null>(null)
 
@@ -32,6 +29,7 @@ export default function UserProfile() {
 
   const handleSubmit = (values: any) => {
     console.log('Form Data: ', values)
+    back()
     // Tady bys mohl volat API nebo jinou funkci pro zpracování dat
   }
 
@@ -84,10 +82,9 @@ export default function UserProfile() {
                 onBlur={handleBlur('bank_iban')}
                 error={touched.bank_iban && errors.bank_iban}
               />
-              <View style={tw('flexRow', 'justifyEnd')}>
+              <BottomActionBar>
                 <Button type="primary" label="Uložit" onPress={() => handleSubmit()} />
-              </View>
-              <UnsavedChanges />
+              </BottomActionBar>
             </>
           )}
         </Formik>

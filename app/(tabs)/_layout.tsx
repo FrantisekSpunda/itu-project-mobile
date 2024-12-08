@@ -1,17 +1,11 @@
 import { Tabs } from 'expo-router'
 import React from 'react'
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon'
 import { IconBasket, IconHome, IconUserDollar, IconPlus } from '@tabler/icons-react-native'
-import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { tailwind } from 'react-native-tailwindcss'
 import { getColor, tw } from '@/utils/utils.tailwind'
-import { TouchableOpacity } from 'react-native'
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme()
-
   return (
     <Tabs
       screenOptions={{
@@ -20,6 +14,7 @@ export default function TabLayout() {
         tabBarInactiveTintColor: getColor('Black'),
         tabBarStyle: tw('bgWhite', 'borderWhite', 'shadowNone'),
         tabBarShowLabel: false,
+        animation: 'shift',
       }}
     >
       <Tabs.Screen

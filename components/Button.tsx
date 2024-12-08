@@ -3,9 +3,8 @@ import { TouchableOpacity, TouchableOpacityProps } from 'react-native'
 import { ThemedText } from './ThemedText'
 import { tw } from '@/utils/utils.tailwind'
 import React, { JSXElementConstructor, ReactElement } from 'react'
-import { TouchableHighlight } from 'react-native-gesture-handler'
 
-const buttonTypeStyles = {
+const typeStyles = {
   primary: {
     container: tw('bgPrimary', 'pX4', 'pY2'),
     text: tw('textWhite'),
@@ -26,30 +25,36 @@ const buttonTypeStyles = {
   },
 }
 
-type ButtonProps = TouchableOpacityProps & {
+export type ButtonProps = TouchableOpacityProps & {
+  type: keyof typeof typeStyles
   label?: string
   icon?: ReactElement<any, string | JSXElementConstructor<any>>
   iconAfter?: boolean
-  type: keyof typeof buttonTypeStyles
+  style?: any[]
 }
 
-export const Button = ({ label, icon, iconAfter, type, ...rest }: ButtonProps) => {
+export const Button = ({ label, icon, iconAfter, type, style, ...rest }: ButtonProps) => {
   // Clone icon
   const Icon = !!icon
     ? React.cloneElement(icon, {
-        style: [...tw('textPrimary', icon.props.style, 'm0', iconAfter ? 'mL2' : 'mR2'), buttonTypeStyles[type].icon],
+        ...icon.props,
+        style: [...tw('textPrimary', 'm0', iconAfter ? 'mL2' : 'mR2'), typeStyles[type].icon, icon.props.style],
         strokeWidth: 2,
-        size: buttonTypeStyles[type].iconSize,
+        size: typeStyles[type].iconSize,
       })
     : null
 
   return (
     <TouchableOpacity
-      style={[...tw('flexRow', 'itemsCenter', 'roundedFull', { width: 'auto', alignSelf: 'flex-start' }), ...buttonTypeStyles[type].container]}
+      style={[
+        ...tw('flexRow', 'itemsCenter', 'roundedFull', { width: 'auto', alignSelf: 'flex-start' }),
+        ...typeStyles[type].container,
+        ...(style instanceof Array ? style : []),
+      ]}
       {...rest}
     >
       {!iconAfter && Icon}
-      <ThemedText type="body1" style={[...tw('textWhite'), ...buttonTypeStyles[type].text]}>
+      <ThemedText type="body1" style={[...tw('textWhite'), ...typeStyles[type].text]}>
         {label}
       </ThemedText>
       {iconAfter && Icon}

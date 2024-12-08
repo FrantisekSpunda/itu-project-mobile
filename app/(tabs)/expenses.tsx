@@ -1,19 +1,40 @@
 import { getExpenses } from '@/api'
 import { Expense } from '@/api/types'
-import { Button, ContactItem, ExpenseItem, Heading, Layout, List, MainDept, SettlementItem } from '@/components'
+import { Badge, Button, ContactItem, ExpenseItem, Heading, Layout, List, MainDept, SettlementItem } from '@/components'
+import { tw } from '@/utils'
 import { IconExternalLink, IconPlus } from '@tabler/icons-react-native'
 import React, { useState, useEffect } from 'react'
+import { View } from 'react-native'
 
 export default function Expenses() {
+  const filters: { label: string; value: 'all' | 'expenses' | 'settlements' }[] = [
+    { label: 'Vše', value: 'all' },
+    { label: 'Výdaje', value: 'expenses' },
+    { label: 'Vyrovnání', value: 'settlements' },
+  ]
+
   const [expenses, setExpenses] = useState<Expense[]>([])
+  const [filter, setFilter] = useState<(typeof filters)[0]['value']>('all')
 
   useEffect(() => {
     getExpenses(1).then(setExpenses)
   }, [])
+
   return (
     <Layout>
-      <Heading text="Přehled" showBack={false} />
+      <Heading text="Všechny výdaje" showBack={false} />
       <MainDept />
+      <View style={tw('flexRow', 'wFull', { gap: 12 })}>
+        {filters.map((item, i) => (
+          <Badge
+            key={i}
+            size="medium"
+            label={item.label}
+            style={filter == item.value ? tw('bgLightBlue') : tw('bgWhite')}
+            onPress={() => setFilter(item.value)}
+          />
+        ))}
+      </View>
       <List label="Listopad 2024">
         {expenses.map((expense, i) =>
           expense.type == 'expense' ? (

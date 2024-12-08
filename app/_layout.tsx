@@ -7,8 +7,6 @@ import 'react-native-reanimated'
 
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useReactQueryDevTools } from '@dev-plugins/react-query/build/useReactQueryDevTools'
 import { Store } from '@/hooks'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -36,8 +34,10 @@ export default function RootLayout() {
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack screenOptions={{ animation: 'slide_from_right' }}>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="add_expense" options={{ headerShown: false }} />
             <Stack.Screen name="user_profile" options={{ headerShown: false }} />
             <Stack.Screen name="login" options={{ headerShown: false }} />
+            <Stack.Screen name="register" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>
         </ThemeProvider>

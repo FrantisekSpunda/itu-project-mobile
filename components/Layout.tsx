@@ -2,32 +2,35 @@ import { ScrollView, TouchableOpacity, View, ViewProps } from 'react-native'
 import { tw } from '@/utils/utils.tailwind'
 import { TopBar } from './Topbar'
 import { IconPlus } from '@tabler/icons-react-native'
-import { useNavigation } from 'expo-router'
+import { BottomAddButton } from './BottomAddButton'
+import { UnsavedChanges } from './UnsavedChanges'
+import { BottomActionBar } from './BottomActionBar'
 import { ThemedText } from './ThemedText'
+import { SearchModal } from './SearchModal'
+import { useStore } from '@/hooks'
 
 type LayoutProps = ViewProps & {}
 
 export const Layout = ({ children, ...rest }: LayoutProps) => {
-  const navigation = useNavigation()
-  const currentRoute = navigation.getState().routes[navigation.getState().index].name
+  const { store } = useStore()
 
   return (
-    <View {...rest} style={tw('wFull', 'hFull', 'bgBackground')}>
+    <View {...rest} style={tw('wFull', 'hFull', 'bgBackground', 'relative')}>
       <TopBar />
-      <ScrollView contentContainerStyle={tw({ rowGap: 16 }, 'flexCol', 'p4', 'wFull', 'minHFull')}>{children}</ScrollView>
-      {(currentRoute == 'index' || currentRoute == 'expenses') && (
-        <TouchableOpacity style={tw('absolute', 'bgPrimary', 'roundedFull', { bottom: 20, left: '50%', transform: [{ translateX: -28 }] })}>
-          <IconPlus size={56} style={tw('textWhite')} />
-        </TouchableOpacity>
-      )}
+      <ScrollView contentContainerStyle={tw({ rowGap: 16 }, 'flexCol', 'p4', 'wFull', 'minHFull')} scrollEnabled={Object.values(store.modal).every((v) => !v)}>
+        {children}
+      </ScrollView>
+      <BottomAddButton />
+      <SearchModal />
+      <View style={tw('absolute', { bottom: 0, left: 0 })}>
+        {/* <UnsavedChanges.Provider /> */}
+        <BottomActionBar.Provider />
+      </View>
     </View>
   )
 }
 
 Layout.login = ({ children, ...rest }: LayoutProps) => {
-  const navigation = useNavigation()
-  const currentRoute = navigation.getState().routes[navigation.getState().index].name
-
   return (
     <View {...rest} style={tw('wFull', 'hFull', 'bgBackground')}>
       <TopBar.login />
