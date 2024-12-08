@@ -4,19 +4,12 @@ import { IconUser } from '@tabler/icons-react-native'
 import { tw } from '@/utils/utils.tailwind'
 import { IconExternalLink, IconPlus } from '@tabler/icons-react-native'
 import { Layout, Heading, Widget, Button, List, ContactItem, ExpenseItem, SettlementItem } from '@/components'
-import { getContact, getContacts, getExpenses } from '@/api'
 import { Contact, Expense } from '@/api/types'
 import { useRouter } from 'expo-router'
+import { dbLocalData } from '@/api/db'
 
 export default function Overview() {
-  const [expenses, setExpenses] = useState<Expense[]>([])
-  const [contacts, setContacts] = useState<(Contact & { amount: number })[]>([])
   const { push } = useRouter()
-
-  useEffect(() => {
-    getExpenses(1).then(setExpenses)
-    getContact(1).then((data) => setContacts(data || []))
-  }, [])
 
   return (
     <Layout>
@@ -31,8 +24,8 @@ export default function Overview() {
           </>
         }
       >
-        {contacts.map((contact, i) => (
-          <ContactItem key={i} user={{ firstName: contact.first_name || '', lastName: contact.last_name || '' }} amount={contact.amount} />
+        {dbLocalData.users.map((contact, i) => (
+          <ContactItem key={i} user={{ firstName: contact.first_name || '', lastName: contact.last_name || '' }} amount={120 * Math.pow(-1, i)} />
         ))}
       </List>
       <List label="Nedokončené">
@@ -42,7 +35,7 @@ export default function Overview() {
         label="Výdaje za poslední měsíc"
         buttons={<Button type="transparent" label="Výdaje" icon={<IconExternalLink />} onPress={() => push('/(tabs)/expenses')} />}
       >
-        {expenses.map((expense, i) =>
+        {dbLocalData.expenses.map((expense, i) =>
           expense.type == 'expense' ? (
             <ExpenseItem
               key={i}

@@ -3,11 +3,11 @@ import { Layout, Heading, Button, Box, Input, BottomActionBar, ThemedText } from
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
-import { getProfile } from '@/api'
 import { User } from '@/api/types'
 import { useRouter } from 'expo-router'
 import { IconCheck } from '@tabler/icons-react-native'
 import { TextInput } from 'react-native-gesture-handler'
+import { dbLocalData } from '@/api/db'
 
 const validationSchema = Yup.object().shape({
   first_name: Yup.string().required('Jméno je povinné').min(2, 'Jméno musí mít alespoň 2 znaky'),
@@ -21,17 +21,11 @@ const validationSchema = Yup.object().shape({
 export default function UserProfile() {
   const { back } = useRouter()
 
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User | null>(dbLocalData.users[0])
 
   const lastNameRef = useRef<TextInput>(null)
   const emailRef = useRef<TextInput>(null)
   const bankAccountRef = useRef<TextInput>(null)
-
-  useEffect(() => {
-    getProfile(1).then((data) => {
-      setUser(data)
-    })
-  }, [])
 
   const handleSubmit = (values: any) => {
     console.log('Form Data: ', values)

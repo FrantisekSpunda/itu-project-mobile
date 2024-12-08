@@ -8,6 +8,7 @@ import { Button } from './Button'
 import { ExpenseItem } from './ExpenseItem'
 import { IconArrowLeft, IconSearch } from '@tabler/icons-react-native'
 import { useEffect, useRef, useState } from 'react'
+import { SettlementItem } from './SettlementItem'
 
 export const SearchModal = () => {
   const { store, setStore } = useStore()
@@ -17,57 +18,46 @@ export const SearchModal = () => {
 
   const spaceFromTop = 128
 
-  useEffect(() => {
-    const timeout = setTimeout(() => ref.current?.focus(), 100)
-
-    return () => clearTimeout(timeout)
-  }, [store.modal.search])
-
-  if (!store.modal.search) return null
-
   return (
-    <KeyboardAvoidingView
-      style={tw('flexCol', 'absolute', 'z10', 'hFull', 'wFull', { top: 0, left: 0, height: '100%' })}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
+    <Modal
+      visible={store.modal.search}
+      animationType="slide"
+      onRequestClose={() => setStore('modal.search', false)}
+      transparent
+      onShow={() => ref.current?.focus()}
     >
-      <Modal transparent visible={store.modal.search} animationType="slide" onRequestClose={() => setStore('modal.search', false)}>
-        <View onTouchEnd={() => setStore('modal.search', false)} style={tw('wFull', 'bgGray', { top: 0, left: 0, opacity: 0.6, height: spaceFromTop })}></View>
-        <Box style={tw('hFull')}>
-          <Formik initialValues={{ search: '' }} onSubmit={handleSubmit}>
-            {({ handleChange, handleBlur }) => (
-              <>
-                <Input ref={ref} name="search" label="Vyhledávání" icon={<IconSearch />} onChange={handleChange('search')} onBlur={handleBlur('search')} />
-
-                <ScrollView style={tw('h0', 'overflowHidden', 'flexCol', 'mB48', 'mT2')}>
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123324} />
-                  <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={-32} />
-                </ScrollView>
-              </>
-            )}
-          </Formik>
-          <Button
-            type="primary"
-            style={tw('absolute', { bottom: spaceFromTop + 16, right: 16 })}
-            label="Zpět"
-            icon={<IconArrowLeft style={tw('textBlack')} color="white" />}
-            onPress={() => setStore('modal.search', false)}
-          />
-        </Box>
-      </Modal>
-    </KeyboardAvoidingView>
+      <View onTouchEnd={() => setStore('modal.search', false)} style={tw('wFull', 'bgGray', { top: 0, left: 0, opacity: 0.6, height: spaceFromTop })}></View>
+      <Box style={tw('hFull', { height: '100%' })}>
+        <Formik initialValues={{ search: '' }} onSubmit={handleSubmit}>
+          {({ handleChange, handleBlur }) => (
+            <Input ref={ref} name="search" label="Vyhledávání" icon={<IconSearch />} onChange={handleChange('search')} onBlur={handleBlur('search')} />
+          )}
+        </Formik>
+        <ScrollView style={tw('h0', 'overflowHidden', 'flexCol', 'mB48', 'mT2')}>
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <SettlementItem payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={444} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={-32} onPress={() => setStore('modal.search', false)} />
+        </ScrollView>
+        <Button
+          type="primary"
+          style={tw('absolute', { bottom: spaceFromTop + 16, right: 16 })}
+          label="Zpět"
+          icon={<IconArrowLeft style={tw('textBlack')} color="white" />}
+          onPress={() => setStore('modal.search', false)}
+        />
+      </Box>
+    </Modal>
   )
 }

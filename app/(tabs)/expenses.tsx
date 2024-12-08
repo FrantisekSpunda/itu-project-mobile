@@ -1,4 +1,4 @@
-import { getExpenses } from '@/api'
+import { dbLocalData } from '@/api/db'
 import { Expense } from '@/api/types'
 import { Badge, Button, ContactItem, ExpenseItem, Heading, Layout, List, Widget, SettlementItem } from '@/components'
 import { tw } from '@/utils'
@@ -14,11 +14,6 @@ export default function Expenses() {
   ]
 
   const [filter, setFilter] = useState<(typeof filters)[0]['value']>('all')
-
-  const [expenses, setExpenses] = useState<Expense[]>([])
-  useEffect(() => {
-    getExpenses(1).then(setExpenses)
-  }, [])
 
   return (
     <Layout>
@@ -36,7 +31,7 @@ export default function Expenses() {
         ))}
       </View>
       <List label="Listopad 2024">
-        {expenses.map((expense, i) =>
+        {dbLocalData.expenses.map((expense, i) =>
           expense.type == 'expense' ? (
             <ExpenseItem
               key={i}
@@ -50,7 +45,7 @@ export default function Expenses() {
         )}
       </List>
       <List label="Říjen 2024">
-        {expenses.map((expense, i) =>
+        {dbLocalData.expenses.map((expense, i) =>
           expense.type == 'expense' ? (
             <ExpenseItem
               key={i}

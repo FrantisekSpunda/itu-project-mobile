@@ -1,8 +1,7 @@
 import { Tabs } from 'expo-router'
 import React from 'react'
 
-import { IconBasket, IconHome, IconUserDollar, IconPlus } from '@tabler/icons-react-native'
-import { useColorScheme } from '@/hooks/useColorScheme'
+import { IconBasket, IconHome, IconUserDollar } from '@tabler/icons-react-native'
 import { getColor, tw } from '@/utils/utils.tailwind'
 
 export default function TabLayout() {

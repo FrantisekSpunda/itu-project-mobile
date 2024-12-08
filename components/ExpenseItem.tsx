@@ -1,11 +1,11 @@
 import { tw } from '@/utils/utils.tailwind'
-import { TouchableOpacity, View, ViewProps } from 'react-native'
+import { TouchableOpacity, View, TouchableOpacityProps } from 'react-native'
 import { ThemedText } from '@/components/ThemedText'
 import { getSign } from '@/utils/utils.number'
 import { IconCreditCard, IconFilePencil, IconShoppingCart } from '@tabler/icons-react-native'
 import { useRouter } from 'expo-router'
 
-type ExpenseItemProps = ViewProps & {
+type ExpenseItemProps = TouchableOpacityProps & {
   type?: string
   payer: {
     firstName: string
@@ -16,14 +16,17 @@ type ExpenseItemProps = ViewProps & {
   draft?: boolean
 }
 
-export const ExpenseItem = ({ payer, label, amount, draft, ...rest }: ExpenseItemProps) => {
+export const ExpenseItem = ({ payer, label, amount, draft, onPress, ...rest }: ExpenseItemProps) => {
   const { push } = useRouter()
 
   return (
     <TouchableOpacity
       {...rest}
       style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}
-      onPress={() => (draft ? push('/expense_add') : push('/expense_detail'))}
+      onPress={(e) => {
+        draft ? push('/expense_add') : push('/expense_detail')
+        if (onPress) onPress(e)
+      }}
     >
       <View style={tw('flexRow', 'itemsCenter')}>
         <View style={tw({ width: 30, height: 30 }, 'flex', 'justifyCenter', 'itemsCenter', 'mR3')}>

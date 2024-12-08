@@ -1,12 +1,12 @@
 import { tw } from '@/utils/utils.tailwind'
-import { TouchableOpacity, View, ViewProps } from 'react-native'
+import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native'
 import { ThemedText } from '@/components/ThemedText'
 import { getSign } from '@/utils/utils.number'
 import { IconArrowNarrowRight, IconCash, IconCreditCard, IconShoppingCart } from '@tabler/icons-react-native'
 import { Badge } from './Badge'
 import { useRouter } from 'expo-router'
 
-type SettlementItemProps = ViewProps & {
+type SettlementItemProps = TouchableOpacityProps & {
   payer: {
     firstName: string
     lastName: string
@@ -14,14 +14,17 @@ type SettlementItemProps = ViewProps & {
   amount: number
 }
 
-export const SettlementItem = ({ payer, amount, ...rest }: SettlementItemProps) => {
+export const SettlementItem = ({ payer, amount, onPress, ...rest }: SettlementItemProps) => {
   const { push } = useRouter()
 
   return (
     <TouchableOpacity
       {...rest}
       style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}
-      onPress={() => push('/settlement_detail')}
+      onPress={(e) => {
+        push('/settlement_detail')
+        if (onPress) onPress(e)
+      }}
     >
       <View style={tw('flexRow', 'itemsCenter')}>
         <View style={tw({ width: 30, height: 30 }, 'flex', 'justifyCenter', 'itemsCenter', 'mR3')}>
