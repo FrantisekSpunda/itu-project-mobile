@@ -98,7 +98,7 @@ export default function ContactDetail() {
                 {dirty ? (
                   <Button type="primary" label="Uložit" icon={<IconCheck />} onPress={() => handleSubmit()} />
                 ) : (
-                  <Button type="white" label="Vyrovnat se" icon={<IconCreditCard />} onPress={() => push('/expense_add')} />
+                  <Button type="white" label="Vyrovnat se" icon={<IconCreditCard />} onPress={() => push('/settlement_add')} />
                 )}
               </BottomActionBar>
             </>
