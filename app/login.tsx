@@ -6,6 +6,12 @@ import { Formik } from 'formik'
 import { IconBrandGoogleFilled } from '@tabler/icons-react-native'
 import { TextInput, View } from 'react-native'
 import { useRouter } from 'expo-router'
+import { get } from '@/api'
+import * as WebBrowser from 'expo-web-browser'
+import { useAuthRequest } from 'expo-auth-session'
+import { API_BASE_URL, GOOGLE_CLIENT_ID, REDIRECT_URI } from '@/config'
+
+WebBrowser.maybeCompleteAuthSession()
 
 const validationSchema = Yup.object().shape({
   password: Yup.string().required('Heslo je povinné').min(8, 'Heslo musí být minimálně 8 znaků dlouhé'),
@@ -16,6 +22,35 @@ export default function Login() {
   const { push } = useRouter()
 
   const inputRef = useRef<TextInput>(null)
+
+  const [googleAuthUrl, setGoogleAuthUrl] = useState('')
+
+  useEffect(() => {
+    const fetchGoogleAuthUrl = async () => {
+      const response = await get<{ url: string }>('auth/google/redirect')
+      if (response.status == 200) setGoogleAuthUrl(response.data.url)
+    }
+
+    fetchGoogleAuthUrl()
+  }, [])
+
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      clientId: GOOGLE_CLIENT_ID,
+      redirectUri: 'https://itu.matejkrenek.cz/login',
+      scopes: ['openid', 'profile', 'email'],
+      usePKCE: false,
+    },
+    {
+      authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
+    }
+  )
+
+  useEffect(() => {
+    console.log('sfesfse', REDIRECT_URI)
+    console.log('request', request)
+    console.log('response', response)
+  })
 
   const handleSubmit = (values: any) => {
     push('/(tabs)')
@@ -58,7 +93,13 @@ export default function Login() {
                 error={touched.password && errors.password}
               />
               <View style={tw('flexRow', 'justifyEnd', { gap: 16 })}>
-                <Button type="white" label="Přihlásit se přes" iconAfter icon={<IconBrandGoogleFilled size={18} color="black" fill="white" />} />
+                <Button
+                  type="white"
+                  label="Přihlásit se přes"
+                  iconAfter
+                  onPress={() => promptAsync()}
+                  icon={<IconBrandGoogleFilled size={18} color="black" fill="white" />}
+                />
                 <Button type="primary" onPress={() => handleSubmit()} label="Přihlásit se" />
               </View>
             </>
