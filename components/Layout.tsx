@@ -7,7 +7,9 @@ import { UnsavedChanges } from './UnsavedChanges'
 import { BottomActionBar } from './BottomActionBar'
 import { ThemedText } from './ThemedText'
 import { SearchModal } from './SearchModal'
-import { useStore } from '@/hooks'
+import { useAuth, useAuthGoogle, useStore } from '@/hooks'
+import { useEffect } from 'react'
+import { Redirect, useRouter, useSegments } from 'expo-router'
 
 type LayoutProps = ViewProps & {
   scrollEnabled?: boolean
@@ -15,6 +17,9 @@ type LayoutProps = ViewProps & {
 
 export const Layout = ({ scrollEnabled = true, children, ...rest }: LayoutProps) => {
   const { store } = useStore()
+  const { redirect } = useAuth()
+  const authLoaded = useAuthGoogle()
+  redirect(authLoaded)
 
   return (
     <View {...rest} style={tw('wFull', 'hFull', 'bgBackground', 'relative')}>
@@ -36,6 +41,19 @@ export const Layout = ({ scrollEnabled = true, children, ...rest }: LayoutProps)
 }
 
 Layout.login = ({ children, ...rest }: LayoutProps) => {
+  const {
+    store: {
+      auth: { token },
+    },
+  } = useStore()
+
+  const [currentPage] = useSegments()
+  const publicPages = ['login', 'register']
+
+  console.log('wtfff', token)
+  if (token && publicPages.includes(currentPage)) return <Redirect href="/" />
+  if (!token && !publicPages.includes(currentPage)) return <Redirect href="/login" />
+
   return (
     <View {...rest} style={tw('wFull', 'hFull', 'bgBackground')}>
       <TopBar.login />

@@ -12,6 +12,23 @@ type StoreContextProps = {
 }
 
 const initialState = {
+  auth: {
+    token: '' as string | null,
+    user: {
+      avatar: null as string | null,
+      email: null as string | null,
+      bankAccount: null as string | null,
+      bankIban: null as string | null,
+      currencyId: null as number | null,
+      emailNotificationsOn: null as boolean | null,
+      firstName: null as string | null,
+      lastName: null as string | null,
+      googleId: null as string | null,
+      id: null as string | null,
+      updatedAt: null as string | null,
+      createdAt: null as string | null,
+    },
+  },
   form: {
     unsavedChanges: false,
     bottomActionBar: [] as React.ReactNode,

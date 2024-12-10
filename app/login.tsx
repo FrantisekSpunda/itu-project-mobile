@@ -6,10 +6,9 @@ import { Formik } from 'formik'
 import { IconBrandGoogleFilled } from '@tabler/icons-react-native'
 import { TextInput, View } from 'react-native'
 import { useRouter } from 'expo-router'
-import { get } from '@/api'
 import * as WebBrowser from 'expo-web-browser'
 import { useAuthRequest } from 'expo-auth-session'
-import { API_BASE_URL, GOOGLE_CLIENT_ID, REDIRECT_URI } from '@/config'
+import { API_BASE_URL, GOOGLE_AUTH_ENDPOINT, GOOGLE_CLIENT_ID, REDIRECT_URI } from '@/config'
 
 WebBrowser.maybeCompleteAuthSession()
 
@@ -23,34 +22,18 @@ export default function Login() {
 
   const inputRef = useRef<TextInput>(null)
 
-  const [googleAuthUrl, setGoogleAuthUrl] = useState('')
-
-  useEffect(() => {
-    const fetchGoogleAuthUrl = async () => {
-      const response = await get<{ url: string }>('auth/google/redirect')
-      if (response.status == 200) setGoogleAuthUrl(response.data.url)
-    }
-
-    fetchGoogleAuthUrl()
-  }, [])
-
   const [request, response, promptAsync] = useAuthRequest(
     {
       clientId: GOOGLE_CLIENT_ID,
-      redirectUri: 'https://itu.matejkrenek.cz/login',
-      scopes: ['openid', 'profile', 'email'],
+      redirectUri: `${API_BASE_URL}/auth/google/mobile`,
+      scopes: ['profile', 'email'],
       usePKCE: false,
+      state: REDIRECT_URI,
     },
     {
-      authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
+      authorizationEndpoint: GOOGLE_AUTH_ENDPOINT,
     }
   )
-
-  useEffect(() => {
-    console.log('sfesfse', REDIRECT_URI)
-    console.log('request', request)
-    console.log('response', response)
-  })
 
   const handleSubmit = (values: any) => {
     push('/(tabs)')

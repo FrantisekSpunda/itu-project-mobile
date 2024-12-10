@@ -1,13 +1,15 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StatusBar } from 'react-native'
 import { tailwind } from 'react-native-tailwindcss'
-import { IconLogin, IconRegistered, IconUser } from '@tabler/icons-react-native' // adjust import based on your setup
+import { IconLogin, IconLogout, IconRegistered, IconUser } from '@tabler/icons-react-native' // adjust import based on your setup
 import { tw } from '@/utils/utils.tailwind'
 import { useRouter } from 'expo-router'
 import { ThemedText } from './ThemedText'
+import { useAuth } from '@/hooks'
 
 export const TopBar = () => {
   const { push } = useRouter()
+  const { logout } = useAuth()
 
   return (
     <View style={tw('bgWhite')}>
@@ -23,6 +25,10 @@ export const TopBar = () => {
         </TouchableOpacity>
 
         <View style={tw('flexRow', { gap: 12 })}>
+          <TouchableOpacity style={tw('roundedFull', 'bgGray100', 'p3')} onPress={() => logout()}>
+            <IconLogout size={24} color="black" />
+          </TouchableOpacity>
+
           <TouchableOpacity style={tw('roundedFull', 'bgGray100', 'p3')} onPress={() => push('/login')}>
             <IconLogin size={24} color="black" />
           </TouchableOpacity>
