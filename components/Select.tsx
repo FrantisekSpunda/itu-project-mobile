@@ -1,10 +1,21 @@
 import { tw } from '@/utils/utils.tailwind'
 import { FormikHelpers, useFormikContext } from 'formik'
 import React, { forwardRef, JSXElementConstructor, ReactElement, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { TextInput, Text, View, TouchableOpacity, Keyboard, ViewProps, TextInputProps, Modal, FlatList } from 'react-native'
+import {
+  TextInput,
+  Text,
+  View,
+  TouchableOpacity,
+  Keyboard,
+  ViewProps,
+  TextInputProps,
+  FlatList,
+  NativeSyntheticEvent,
+  TextInputChangeEventData,
+} from 'react-native'
 import { ThemedText } from './ThemedText'
 
-type SelectOption = { label: string; value: string }
+export type SelectOption = { label: string; value: string }
 
 export type SelectRef = View & { press?: any }
 
@@ -14,6 +25,7 @@ type SelectProps<T extends boolean> = ViewProps & {
   inputProps?: TextInputProps
   icon?: ReactElement<any, string | JSXElementConstructor<any>>
   multiple?: T
+  searchable?: { value: string; onChange: (text: string) => void; creatable?: boolean }
   value: T extends true ? string[] : string
   options: SelectOption[]
   setValue: FormikHelpers<any>['setFieldValue']
@@ -24,17 +36,38 @@ type SelectProps<T extends boolean> = ViewProps & {
 
 export const Select = forwardRef(
   <T extends boolean>(
-    { name, label, icon, value, setValue, style, onBlur, options, multiple, error }: SelectProps<T>,
+    { name, label, icon, value, setValue, style, onBlur, searchable, options, multiple, error }: SelectProps<T>,
     globalRef: React.ForwardedRef<SelectRef>
   ) => {
     const ref = useRef<SelectRef>(null)
-
-    const [optionsVisible, setOptionsVisible] = useState(false)
     useImperativeHandle(globalRef, () => ({ ...ref.current, press: () => setOptionsVisible((prev) => !prev) }) as SelectRef)
 
+    const inputRef = useRef<TextInput>(null)
+
+    const formik = useFormikContext<{ [key: string]: any }>()
+    const [optionsVisible, setOptionsVisible] = useState(false)
+    const [filled, setFilled] = useState(false)
+
+    const setState = useCallback(
+      (focused: boolean, value?: string) => {
+        setFilled(!!(focused || value))
+        setOptionsVisible(focused)
+      },
+      [value]
+    )
+
+    useEffect(() => {
+      setState(false)
+    }, [formik.initialValues[name]])
+
     const handleSelect = (item: SelectOption) => {
-      if (setValue) setValue(name, multiple ? [...value, item.value] : item.value)
+      if (setValue) setValue(name, multiple ? [...value, item.value] : item.value === 'custom' ? item.label : item.value)
       if (!multiple) setOptionsVisible(false)
+      if (searchable) {
+        searchable.onChange(item.label)
+      }
+      setState(false, item.value)
+      console.log('value', value)
     }
 
     const handleRemove = (item: string) => {
@@ -52,9 +85,13 @@ export const Select = forwardRef(
         if (optionsFiltered.length) return optionsFiltered
         return [{ label: 'Žádné možnosti k výběru', value: 'options-empty' }]
       } else {
-        return options
+        const optionsFiltered =
+          searchable?.value && searchable?.creatable && options.every((v) => v.label != searchable.value)
+            ? [{ label: `${searchable.value}`, value: 'custom' }, ...options]
+            : options
+        return optionsFiltered.length ? optionsFiltered : [{ label: 'Žádné možnosti k výběru', value: 'options-empty' }]
       }
-    }, [multiple, options, value])
+    }, [multiple, options, value, searchable?.value])
 
     return (
       <View style={[...tw('relative', 'wFull'), ...(style || [])]}>
@@ -63,6 +100,7 @@ export const Select = forwardRef(
           style={tw('flexRow', 'itemsCenter', 'rounded', 'border', 'borderLightGray', 'pX3')}
           onPress={() => {
             setOptionsVisible((prev) => !prev)
+            if (searchable) inputRef.current?.focus()
           }}
           activeOpacity={1}
         >
@@ -72,18 +110,44 @@ export const Select = forwardRef(
             <ThemedText
               style={[
                 ...tw('textGray', 'fontNormal'),
-                ...[String(value) ? tw('textCaption', { paddingTop: 6, marginBottom: 2 }) : tw('textBody1', 'pT4', multiple ? 'pB1' : 'pB2')],
+                ...[filled ? tw('textCaption', { paddingTop: 6, marginBottom: 2 }) : tw('textBody1', 'pT4', multiple ? 'pB1' : 'pB2')],
               ]}
             >
               {label}
             </ThemedText>
-            <View style={[...tw('pB2', 'pL0', 'textBody1', 'flexRow', 'flexWrap', 'wFull', { gap: 4 }), ...(String(value) ? tw('pB3') : tw('h0', 'pB2'))]}>
+            <View
+              style={[
+                ...tw('pB2', 'pL0', 'textBody1', 'flexRow', 'flexWrap', 'wFull', { gap: 4 }),
+                ...(filled ? (searchable?.value ? tw('pB0') : []) : tw('h0', 'pB2')),
+              ]}
+            >
               {multiple ? (
                 (value as string[]).map((v, i) => (
                   <ThemedText type="body2" style={tw('pX2', 'pY0', 'roundedFull', 'bgLightGray', 'textBlack')} key={i} onPress={() => handleRemove(v)}>
                     {options.find((option) => option.value === v)?.label}
                   </ThemedText>
                 ))
+              ) : searchable ? (
+                <TextInput
+                  ref={inputRef}
+                  onChangeText={(text) => {
+                    if (value && value < text) {
+                      searchable.onChange('')
+                      setValue(name, '')
+                    } else searchable.onChange(text)
+                  }}
+                  onFocus={() => {
+                    setState(true)
+                  }}
+                  // onBlur={(e) => {
+                  //   if (onBlur) onBlur(e)
+                  //   setState(false)
+                  //   console.log();
+
+                  // }}
+                  value={searchable.value}
+                  style={[...tw('pB2', 'p0', 'pL0', 'textBody1', 'fontMedium', 'wFull'), ...(filled ? tw('pB3') : tw('h0', 'pB2'))]}
+                />
               ) : (
                 <ThemedText>{options.find((option) => option.value === value)?.label || ''}</ThemedText>
               )}
@@ -98,7 +162,7 @@ export const Select = forwardRef(
         )}
         {optionsVisible && (
           <View
-            style={tw('flex', 'rounded', 'bgWhite', 'wFull', 'absolute', 'overflowHidden', 'z100', { top: 60, boxShadow: '0 10 100 -50 gray', zIndex: 100 })}
+            style={tw('flex', 'rounded', 'bgWhite', 'wFull', 'absolute', 'overflowHidden', 'z100', { top: 60, boxShadow: '0 10 10 -10 gray', zIndex: 100 })}
           >
             <FlatList
               nestedScrollEnabled={true}
@@ -113,7 +177,7 @@ export const Select = forwardRef(
                     style={tw('pX4', 'pY3', 'borderLightGray', index + 1 != options.length ? 'borderB' : {}, item.value === value ? 'bgLightGray' : 'bgWhite')}
                     onPress={() => handleSelect(item)}
                   >
-                    <ThemedText>{item.label}</ThemedText>
+                    <ThemedText>{item.value === 'custom' ? `Přidat "${item.label}"` : item.label}</ThemedText>
                   </TouchableOpacity>
                 )
               }

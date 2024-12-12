@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Layout, Heading, Button, Box, Input, BottomActionBar, Select, SelectRef } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
@@ -9,7 +9,7 @@ import { TextInput } from 'react-native'
 import { Api } from '@/api'
 import { useStore } from '@/hooks'
 import { useQueryClient } from '@tanstack/react-query'
-import { usePostContacts } from '@/api/api.helpers'
+import { useGetContactsUsers, usePostContacts } from '@/api/api.helpers'
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Jméno je povinné').min(2, 'Jméno musí mít alespoň 2 znaky'),
@@ -18,25 +18,31 @@ const validationSchema = Yup.object().shape({
 export default function ContactAdd() {
   const initialValues = {
     name: '',
-    user_id: null,
   }
-  const handleSubmit = usePostContacts()
+  const submitContact = usePostContacts()
+  const [search, setSearch] = useState('')
+  const [users] = useGetContactsUsers(search)
+
+  const handleSubmit = (values: typeof initialValues) => {
+    const selectedUser = Number(values.name) ? users.find((user) => user.id === Number(values.name)) : null
+
+    submitContact({ name: !Number(values.name) ? values.name : `${selectedUser?.first_name} ${selectedUser?.last_name}`, user_id: Number(values.name) || null })
+  }
 
   return (
     <Layout scrollEnabled={false}>
       <Heading text="Přidat kontakt" showSearch={false} />
       <Box label="Základní informace" style={tw('borderBlue', { gap: 12 })}>
-        <Formik initialValues={initialValues} enableReinitialize validationSchema={validationSchema} onSubmit={handleSubmit}>
-          {({ handleChange, handleBlur, handleSubmit, values, errors, touched, dirty }) => (
+        <Formik initialValues={initialValues} enableReinitialize onSubmit={handleSubmit}>
+          {({ handleSubmit, setFieldValue, values, errors, touched, dirty }) => (
             <>
-              <Input
+              <Select
                 name="name"
                 label="Jméno"
                 value={values.name}
-                inputProps={{ autoFocus: true, autoCapitalize: 'words', onSubmitEditing: () => handleSubmit() }}
-                onChange={handleChange('name')}
-                onBlur={handleBlur('name')}
-                error={touched.name && errors.name}
+                searchable={{ value: search, creatable: true, onChange: (text) => setSearch(text) }}
+                setValue={setFieldValue}
+                options={users.map((user) => ({ value: String(user.id), label: `${user.first_name} ${user.last_name}` }))}
               />
               <BottomActionBar show={dirty}>
                 <Button type="primary" label="Uložit" icon={<IconCheck />} onPress={() => handleSubmit()} />

@@ -3,6 +3,7 @@ export type apiGetEndpoints = {
   contacts: { contacts: { data: Contact[] } }
   expenses: { data: Expense[] }
   'overview/balance': OverviewBalance
+  'contacts/users': { users: { data: User[] } }
 } & Record<`contacts/${number}`, { contact: Contact }>
 
 export type apiPostEndpoints = {

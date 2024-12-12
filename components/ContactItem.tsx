@@ -1,10 +1,10 @@
 import { tw } from '@/utils/utils.tailwind'
-import { TouchableOpacity, View, ViewProps } from 'react-native'
+import { TouchableOpacity, View, ViewProps, Image } from 'react-native'
 import { ThemedText } from '@/components/ThemedText'
 import { IconCreditCard } from '@tabler/icons-react-native'
 import { useNavigation, useRouter } from 'expo-router'
 import { Contact } from '@/api/types'
-import { formatPrice } from '@/utils'
+import { formatPrice, getAvatar } from '@/utils'
 
 type ContactItemProps = ViewProps & {
   contact: Contact
@@ -16,8 +16,12 @@ export const ContactItem = ({ contact, ...rest }: ContactItemProps) => {
   return (
     <View {...rest} style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}>
       <TouchableOpacity style={tw('flexRow', 'itemsCenter')} onPress={() => push(`/contact/${contact.id}`)}>
-        <View style={tw({ width: 30, height: 30 }, 'roundedFull', 'p1', 'bgLightGray', 'mR3')}>
-          <ThemedText style={tw('textCenter')}>{contact.name}</ThemedText>
+        <View style={tw({ width: 30, height: 30 }, 'roundedFull', 'p1', 'bgLightGray', 'mR3', 'flex', 'itemsCenter', 'justifyCenter', 'overflowHidden')}>
+          {contact.user?.avatar ? (
+            <Image source={{ uri: contact.user.avatar }} style={{ width: 30, height: 30 }} />
+          ) : (
+            <ThemedText style={tw('textCenter')}>{getAvatar(contact.name)}</ThemedText>
+          )}
         </View>
         <ThemedText style={tw()}>{contact.name}</ThemedText>
       </TouchableOpacity>

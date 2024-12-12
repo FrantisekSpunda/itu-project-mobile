@@ -126,6 +126,28 @@ export const useGetContacts = (filter?: Balance['type'][]) => {
   return [contacts, response] as [typeof contacts, typeof response]
 }
 
+export const useGetContactsUsers = (search: string) => {
+  const { store } = useStore()
+
+  const response = useQuery({
+    queryKey: ['contacts', 'users', 'get', search],
+    queryFn: () =>
+      Api.get('contacts/users', {
+        headers: {
+          Authorization: `Bearer ${store.auth.token}`,
+        },
+        params: {
+          ignoreAuthed: true,
+          search,
+        },
+      }),
+    enabled: !!store.auth.token,
+  })
+
+  const users = response.data?.data.users.data || []
+  return [users, response] as [typeof users, typeof response]
+}
+
 export const useGetExpenses = () => {
   const { store } = useStore()
 
@@ -150,7 +172,7 @@ export const usePostContacts = () => {
   const queryClient = useQueryClient()
 
   return useCallback(
-    async (contact: { name: string; user_id: null }) => {
+    async (contact: { name: string | null; user_id: number | null }) => {
       const response = await Api.post(
         'contacts',
         { contacts: [contact] },

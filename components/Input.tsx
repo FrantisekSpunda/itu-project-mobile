@@ -26,7 +26,7 @@ export const Input = forwardRef<TextInput, InputPros>(
     useImperativeHandle(globalRef, () => ref.current as TextInput)
 
     const formik = useFormikContext<{ [key: string]: any }>()
-    const [filled, setFilled] = useState(false)
+    const [filled, setFilled] = useState(!!value)
 
     // Change input state
     useEffect(() => {

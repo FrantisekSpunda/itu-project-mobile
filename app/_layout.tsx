@@ -66,7 +66,7 @@ export default function RootLayout() {
               <Stack.Screen name="expense/create" options={{ headerShown: false }} />
               <Stack.Screen name="expense/[expense_id]" options={{ headerShown: false }} />
 
-              <Stack.Screen name="contact/create" options={{ headerShown: false }} />
+              <Stack.Screen name="contact/create" options={{ headerShown: false, presentation: 'modal', animation: 'fade' }} />
               <Stack.Screen name="contact/[contact_id]" options={{ headerShown: false }} />
 
               <Stack.Screen name="settlement/create" options={{ headerShown: false }} />
