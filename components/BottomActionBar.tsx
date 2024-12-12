@@ -1,7 +1,6 @@
 import { useStore } from '@/hooks'
 import { tw } from '@/utils'
-import { usePathname, useRouter } from 'expo-router'
-import { useFormikContext } from 'formik'
+import { usePathname } from 'expo-router'
 import { useEffect } from 'react'
 import { View } from 'react-native'
 
@@ -15,7 +14,7 @@ export const BottomActionBar = ({ show, children }: BottomActionBarProps) => {
 
   useEffect(() => {
     setStore('form.bottomActionBar', show ? children : null)
-  }, [show, children])
+  }, [show])
 
   return null
 }

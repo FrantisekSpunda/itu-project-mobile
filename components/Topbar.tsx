@@ -29,14 +29,6 @@ export const TopBar = () => {
             <IconLogout size={24} color="black" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={tw('roundedFull', 'bgGray100', 'p3')} onPress={() => push('/login')}>
-            <IconLogin size={24} color="black" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={tw('roundedFull', 'bgGray100', 'p3')} onPress={() => push('/register')}>
-            <IconRegistered size={24} color="black" />
-          </TouchableOpacity>
-
           <TouchableOpacity style={tw('roundedFull', 'bgGray100', 'p3')} onPress={() => push('/user_profile')}>
             <IconUser size={24} color="black" />
           </TouchableOpacity>

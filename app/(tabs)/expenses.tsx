@@ -1,9 +1,7 @@
-import { dbLocalData } from '@/api/db'
-import { Expense } from '@/api/types'
-import { Badge, Button, ContactItem, ExpenseItem, Heading, Layout, List, Widget, SettlementItem } from '@/components'
+import { useGetExpenses } from '@/api/api.helpers'
+import { Badge, ExpenseItem, Heading, Layout, List, Widget } from '@/components'
 import { tw } from '@/utils'
-import { IconExternalLink, IconPlus } from '@tabler/icons-react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { View } from 'react-native'
 
 export default function Expenses() {
@@ -15,10 +13,12 @@ export default function Expenses() {
 
   const [filter, setFilter] = useState<(typeof filters)[0]['value']>('all')
 
+  const [expenses] = useGetExpenses()
+
   return (
     <Layout>
       <Heading text="Všechny výdaje" showBack={false} />
-      <Widget.dept dept={1340} oweYou={410} youOwe={503} />
+      <Widget.dept />
       <View style={tw('flexRow', 'wFull', { gap: 12 })}>
         {filters.map((item, i) => (
           <Badge
@@ -31,32 +31,9 @@ export default function Expenses() {
         ))}
       </View>
       <List label="Listopad 2024">
-        {dbLocalData.expenses.map((expense, i) =>
-          expense.type == 'expense' ? (
-            <ExpenseItem
-              key={i}
-              label={expense.title || ''}
-              payer={{ firstName: String(expense.payer_id), lastName: '' }}
-              amount={expense.amount * (expense.payer_id == 1 ? 1 : -1)}
-            />
-          ) : (
-            <SettlementItem key={i} payer={{ firstName: String(expense.payer_id), lastName: '' }} amount={expense.amount} />
-          )
-        )}
-      </List>
-      <List label="Říjen 2024">
-        {dbLocalData.expenses.map((expense, i) =>
-          expense.type == 'expense' ? (
-            <ExpenseItem
-              key={i}
-              label={expense.title || ''}
-              payer={{ firstName: String(expense.payer_id), lastName: '' }}
-              amount={expense.amount * (expense.payer_id == 1 ? 1 : -1)}
-            />
-          ) : (
-            <SettlementItem key={i} payer={{ firstName: String(expense.payer_id), lastName: '' }} amount={expense.amount} />
-          )
-        )}
+        {expenses.map((expense, i) => (
+          <ExpenseItem key={i} expense={expense} />
+        ))}
       </List>
     </Layout>
   )

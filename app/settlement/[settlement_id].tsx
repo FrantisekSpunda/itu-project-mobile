@@ -25,12 +25,12 @@ export default function SettlementAdd() {
         Od posledního vyrovnání přibyly tyto dluhy
       </ThemedText>
       <List label="Listopad 2024">
-        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} amount={-412} />
-        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} amount={-412} />
+        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} price={-412} />
+        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} price={-412} />
       </List>
       <List label="Říjen 2024">
-        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} amount={412} />
-        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} amount={412} />
+        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} price={412} />
+        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} price={412} />
       </List>
     </Layout>
   )

@@ -8,6 +8,8 @@ import { useRouter } from 'expo-router'
 import { IconCheck } from '@tabler/icons-react-native'
 import { TextInput } from 'react-native-gesture-handler'
 import { dbLocalData } from '@/api/db'
+import { useGetUser, usePutUser } from '@/api/api.helpers'
+import { AutoSubmit } from './../components/AutoSubmit'
 
 const validationSchema = Yup.object().shape({
   first_name: Yup.string().required('Jméno je povinné').min(2, 'Jméno musí mít alespoň 2 znaky'),
@@ -21,17 +23,13 @@ const validationSchema = Yup.object().shape({
 export default function UserProfile() {
   const { back } = useRouter()
 
-  const [user, setUser] = useState<User | null>(dbLocalData.users[0])
+  const [user] = useGetUser()
 
   const lastNameRef = useRef<TextInput>(null)
   const emailRef = useRef<TextInput>(null)
   const bankAccountRef = useRef<TextInput>(null)
 
-  const handleSubmit = (values: any) => {
-    console.log('Form Data: ', values)
-    back()
-    // Tady bys mohl volat API nebo jinou funkci pro zpracování dat
-  }
+  const handleSubmit = usePutUser()
 
   return (
     <Layout>
@@ -39,18 +37,21 @@ export default function UserProfile() {
       <Box style={tw('borderBlue', { gap: 12 })}>
         <ThemedText>Základní informace</ThemedText>
         <Formik
-          initialValues={{
-            first_name: user?.first_name,
-            last_name: user?.last_name,
-            email: user?.email,
-            bank_iban: user?.bank_iban,
-          }}
+          initialValues={
+            {
+              first_name: user?.first_name || '',
+              last_name: user?.last_name || '',
+              email: user?.email || '',
+              bank_iban: user?.bank_iban || '',
+            } as User
+          }
           enableReinitialize
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ handleChange, handleBlur, handleSubmit, values, errors, touched, dirty }) => (
             <>
+              <AutoSubmit />
               <Input
                 name="first_name"
                 label="Vaše jméno"
@@ -84,15 +85,12 @@ export default function UserProfile() {
                 ref={bankAccountRef}
                 name="bank_iban"
                 label="Váš bankovní účet"
-                value={values.bank_iban}
+                value={values.bank_iban || undefined}
                 inputProps={{ onSubmitEditing: () => handleSubmit() }}
                 onChange={handleChange('bank_iban')}
                 onBlur={handleBlur('bank_iban')}
                 error={touched.bank_iban && errors.bank_iban}
               />
-              <BottomActionBar show={dirty}>
-                <Button type="primary" label="Uložit" icon={<IconCheck />} onPress={() => handleSubmit()} />
-              </BottomActionBar>
             </>
           )}
         </Formik>

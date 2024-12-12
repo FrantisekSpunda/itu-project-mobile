@@ -12,7 +12,7 @@ export const BottomAddButton = () => {
     return (
       <TouchableOpacity
         style={tw('absolute', 'bgPrimary', 'roundedFull', { bottom: 20, left: '50%', transform: [{ translateX: -28 }] })}
-        onPress={() => push('/expense_add')}
+        onPress={() => push('/expense/create')}
       >
         <IconPlus size={56} style={tw('textWhite')} />
       </TouchableOpacity>

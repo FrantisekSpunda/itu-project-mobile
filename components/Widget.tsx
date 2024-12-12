@@ -6,11 +6,10 @@ import { IconArrowNarrowRight, IconCash, IconCoins, IconCreditCard } from '@tabl
 import { View } from 'react-native'
 import { Badge } from './Badge'
 import { Button } from './Button'
+import { OverviewBalance, useGetOverviewBalance } from '@/api'
+import { formatPrice } from '@/utils'
 
 type WidgetDeptProps = BoxProps & {
-  dept: number
-  oweYou: number
-  youOwe: number
   buttons?: React.ReactNode
 }
 
@@ -18,7 +17,9 @@ export const Widget = () => {
   return <ThemedText>Zvolte widget</ThemedText>
 }
 
-Widget.dept = ({ dept, oweYou, youOwe, buttons, style, ...rest }: WidgetDeptProps) => {
+Widget.dept = ({ buttons, style, ...rest }: WidgetDeptProps) => {
+  const [balance] = useGetOverviewBalance()
+
   return (
     <Box {...rest} style={[...tw('relative', 'p0'), ...(style instanceof Array ? style : [])]}>
       <View style={tw('p3')}>
@@ -26,14 +27,14 @@ Widget.dept = ({ dept, oweYou, youOwe, buttons, style, ...rest }: WidgetDeptProp
         <ThemedText>Celkový dluh</ThemedText>
         <View style={tw('flexRow', 'itemsBaseline', 'mT3')}>
           <ThemedText type="heading1" style={tw('textGreen', 'mR3')}>
-            {dept > 0 && '+'}
-            {dept}Kč
+            {(balance?.balance || 0) > 0 && '+'}
+            {formatPrice(balance?.balance || 0)}
           </ThemedText>
           <ThemedText type="caption" style={tw('textGray', 'mR3')}>
-            Dluží vám: +{oweYou}Kč
+            Dluží vám: +{formatPrice(balance?.total_owed || 0)}
           </ThemedText>
           <ThemedText type="caption" style={tw('textGray')}>
-            Dlužíte: -{youOwe}Kč
+            Dlužíte: -{balance?.total_paid || 0}
           </ThemedText>
         </View>
       </View>

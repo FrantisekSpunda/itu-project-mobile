@@ -34,21 +34,21 @@ export const SearchModal = () => {
           )}
         </Formik>
         <ScrollView style={tw('h0', 'overflowHidden', 'flexCol', 'mB48', 'mT2')}>
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
           <SettlementItem payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={123} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={444} onPress={() => setStore('modal.search', false)} />
-          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} amount={-32} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={123} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={444} onPress={() => setStore('modal.search', false)} />
+          <ExpenseItem label="Lidl nákup" payer={{ firstName: 'Matěj', lastName: 'Křenek' }} price={-32} onPress={() => setStore('modal.search', false)} />
         </ScrollView>
         <Button
           type="primary"

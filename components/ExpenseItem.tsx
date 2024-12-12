@@ -4,19 +4,14 @@ import { ThemedText } from '@/components/ThemedText'
 import { getSign } from '@/utils/utils.number'
 import { IconCreditCard, IconFilePencil, IconShoppingCart } from '@tabler/icons-react-native'
 import { useRouter } from 'expo-router'
+import { Balance, Contact, Expense } from '@/api/types'
+import { formatPrice } from '@/utils'
 
 type ExpenseItemProps = TouchableOpacityProps & {
-  type?: string
-  payer: {
-    firstName: string
-    lastName: string
-  }
-  label: string
-  amount: number
-  draft?: boolean
+  expense: Expense
 }
 
-export const ExpenseItem = ({ payer, label, amount, draft, onPress, ...rest }: ExpenseItemProps) => {
+export const ExpenseItem = ({ expense, ...rest }: ExpenseItemProps) => {
   const { push } = useRouter()
 
   return (
@@ -24,24 +19,23 @@ export const ExpenseItem = ({ payer, label, amount, draft, onPress, ...rest }: E
       {...rest}
       style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}
       onPress={(e) => {
-        draft ? push('/expense_add') : push('/expense_detail')
-        if (onPress) onPress(e)
+        expense.is_draft ? push('/expense/create') : push('/expense/[expense_id]')
       }}
     >
       <View style={tw('flexRow', 'itemsCenter')}>
         <View style={tw({ width: 30, height: 30 }, 'flex', 'justifyCenter', 'itemsCenter', 'mR3')}>
-          {!draft ? <IconShoppingCart size={18} style={tw('textPrimary')} /> : <IconFilePencil size={18} style={tw('textGray')} />}
+          {!expense.is_draft ? <IconShoppingCart size={18} style={tw('textPrimary')} /> : <IconFilePencil size={18} style={tw('textGray')} />}
           <View style={tw({ opacity: 0.1 }, 'absolute', 'top0', 'roundedFull', 'left0', 'wFull', 'hFull', 'bgPrimary')} />
         </View>
         <View style={tw({ gap: 4 }, 'flexRow', 'itemsBaseline')}>
-          <ThemedText>{label}</ThemedText>
-          <ThemedText type="caption">{!draft ? `${payer.firstName} ${payer.lastName}` : 'Nedokončené'}</ThemedText>
+          <ThemedText>{expense.title}</ThemedText>
+          <ThemedText type="caption">{!expense.is_draft ? expense.payer.name : 'Nedokončené'}</ThemedText>
         </View>
       </View>
       <View style={tw('flexRow', 'itemsCenter')}>
-        <ThemedText style={tw({ '+': 'textGreen', '-': 'textRed', '': 'textGray' }[getSign(amount)] as any, 'mR3')}>
-          {amount > 0 && '+'}
-          {amount} Kč
+        <ThemedText style={tw({ '+': 'textGreen', '-': 'textRed', '': 'textGray' }[getSign(expense.price_calculated)] as any, 'mR3')}>
+          {expense.price_calculated > 0 && '+'}
+          {formatPrice(expense.price_calculated)}
         </ThemedText>
       </View>
     </TouchableOpacity>

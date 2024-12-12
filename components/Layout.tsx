@@ -1,15 +1,12 @@
 import { ScrollView, TouchableOpacity, View, ViewProps } from 'react-native'
 import { tw } from '@/utils/utils.tailwind'
 import { TopBar } from './Topbar'
-import { IconPlus } from '@tabler/icons-react-native'
 import { BottomAddButton } from './BottomAddButton'
-import { UnsavedChanges } from './UnsavedChanges'
 import { BottomActionBar } from './BottomActionBar'
 import { ThemedText } from './ThemedText'
 import { SearchModal } from './SearchModal'
-import { useAuth, useAuthGoogle, useStore } from '@/hooks'
-import { useEffect } from 'react'
-import { Redirect, useRouter, useSegments } from 'expo-router'
+import { useAuthGoogle, useStore } from '@/hooks'
+import { useGetUser } from '@/api/api.helpers'
 
 type LayoutProps = ViewProps & {
   scrollEnabled?: boolean
@@ -17,9 +14,7 @@ type LayoutProps = ViewProps & {
 
 export const Layout = ({ scrollEnabled = true, children, ...rest }: LayoutProps) => {
   const { store } = useStore()
-  const { redirect } = useAuth()
-  const authLoaded = useAuthGoogle()
-  redirect(authLoaded)
+  useAuthGoogle()
 
   return (
     <View {...rest} style={tw('wFull', 'hFull', 'bgBackground', 'relative')}>
@@ -47,12 +42,7 @@ Layout.login = ({ children, ...rest }: LayoutProps) => {
     },
   } = useStore()
 
-  const [currentPage] = useSegments()
-  const publicPages = ['login', 'register']
-
-  console.log('wtfff', token)
-  if (token && publicPages.includes(currentPage)) return <Redirect href="/" />
-  if (!token && !publicPages.includes(currentPage)) return <Redirect href="/login" />
+  useAuthGoogle()
 
   return (
     <View {...rest} style={tw('wFull', 'hFull', 'bgBackground')}>

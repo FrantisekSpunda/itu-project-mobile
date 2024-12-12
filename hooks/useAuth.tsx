@@ -5,15 +5,11 @@ import axios from 'axios'
 import { useStore } from './useStore'
 import { getAuthToken, removeAuthToken, saveAuthToken } from '@/utils'
 import { CallbackRes } from '@/types'
-import { Redirect, useRouter, useSegments } from 'expo-router'
-import { ThemedText } from '@/components'
+import { useRouter, useSegments } from 'expo-router'
 
 export const useAuth = () => {
   const { setStore } = useStore()
   const { push } = useRouter()
-  const { store } = useStore()
-  const [currentPage] = useSegments()
-  const publicPages = ['login', 'register']
 
   const logout = async () => {
     setStore('auth.token', null)
@@ -22,18 +18,13 @@ export const useAuth = () => {
     return
   }
 
-  const redirect = (loaded: boolean) => {
-    if (!loaded) return <ThemedText>Loading</ThemedText>
-
-    if (store.auth.token && publicPages.includes(currentPage)) return <Redirect href="/" />
-    if (!store.auth.token && !publicPages.includes(currentPage)) return <Redirect href="/login" />
-  }
-
-  return { logout, redirect }
+  return { logout }
 }
 
 export const useAuthGoogle = () => {
   const segments = useSegments()
+  const publicPages = ['login', 'register']
+  const router = useRouter()
 
   const [loaded, setLoaded] = useState(false)
   const { store, setStore } = useStore()
@@ -95,13 +86,12 @@ export const useAuthGoogle = () => {
 
     // Main function getting token from any shit
     const loadToken = async () => {
-      console.log('loadToken call')
-
       if (store.auth.token) {
         setLoaded(true)
         console.log('token v context storu', store.auth.token)
         return
       }
+      console.log('no token in store')
 
       const loadedToken = await getAuthToken()
       if (loadedToken) {
@@ -110,12 +100,20 @@ export const useAuthGoogle = () => {
         console.log('token ve secure storage', loadedToken)
         return
       }
+      console.log('no token in secure storage')
 
       handleDeepLink()
     }
 
     loadToken()
   }, [])
+
+  useEffect(() => {
+    if (router && loaded) {
+      if (store.auth.token && publicPages.includes(segments[0])) router.replace('/')
+      if (!store.auth.token && !publicPages.includes(segments[0])) router.replace('/login')
+    }
+  }, [store.auth.token, publicPages, segments, router])
 
   return loaded
 }

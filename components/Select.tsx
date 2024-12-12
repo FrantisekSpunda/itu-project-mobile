@@ -19,10 +19,14 @@ type SelectProps<T extends boolean> = ViewProps & {
   setValue: FormikHelpers<any>['setFieldValue']
   onBlur?: (params?: any) => any
   error?: any
+  style?: any[]
 }
 
 export const Select = forwardRef(
-  <T extends boolean>({ name, label, icon, value, setValue, onBlur, options, multiple, error }: SelectProps<T>, globalRef: React.ForwardedRef<SelectRef>) => {
+  <T extends boolean>(
+    { name, label, icon, value, setValue, style, onBlur, options, multiple, error }: SelectProps<T>,
+    globalRef: React.ForwardedRef<SelectRef>
+  ) => {
     const ref = useRef<SelectRef>(null)
 
     const [optionsVisible, setOptionsVisible] = useState(false)
@@ -53,7 +57,7 @@ export const Select = forwardRef(
     }, [multiple, options, value])
 
     return (
-      <View style={tw('relative')}>
+      <View style={[...tw('relative', 'wFull'), ...(style || [])]}>
         <TouchableOpacity
           ref={ref}
           style={tw('flexRow', 'itemsCenter', 'rounded', 'border', 'borderLightGray', 'pX3')}
@@ -68,12 +72,12 @@ export const Select = forwardRef(
             <ThemedText
               style={[
                 ...tw('textGray', 'fontNormal'),
-                ...[String(value) ? tw('textCaption', { paddingTop: 6, marginBottom: 2 }) : tw('textBody1', 'pT4', 'pB1')],
+                ...[String(value) ? tw('textCaption', { paddingTop: 6, marginBottom: 2 }) : tw('textBody1', 'pT4', multiple ? 'pB1' : 'pB2')],
               ]}
             >
               {label}
             </ThemedText>
-            <View style={[...tw('pB2', 'pL0', 'textBody1', 'flexRow', 'flexWrap', { gap: 4 }), ...(value ? tw('pB3') : tw('h0', 'pB2'))]}>
+            <View style={[...tw('pB2', 'pL0', 'textBody1', 'flexRow', 'flexWrap', 'wFull', { gap: 4 }), ...(String(value) ? tw('pB3') : tw('h0', 'pB2'))]}>
               {multiple ? (
                 (value as string[]).map((v, i) => (
                   <ThemedText type="body2" style={tw('pX2', 'pY0', 'roundedFull', 'bgLightGray', 'textBlack')} key={i} onPress={() => handleRemove(v)}>
