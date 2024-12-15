@@ -31,7 +31,7 @@ export const Input = forwardRef<TextInput, InputPros>(
     // Change input state
     useEffect(() => {
       setState(false)
-    }, [formik.initialValues[name]])
+    }, [value])
 
     // Set state of focus depending on input focus and input value
     const setState = useCallback((focused: boolean) => setFilled(!!(focused || value)), [value])

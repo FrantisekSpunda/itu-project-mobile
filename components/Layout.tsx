@@ -1,4 +1,4 @@
-import { ScrollView, TouchableOpacity, View, ViewProps } from 'react-native'
+import { ScrollView, View, ViewProps } from 'react-native'
 import { tw } from '@/utils/utils.tailwind'
 import { TopBar } from './Topbar'
 import { BottomAddButton } from './BottomAddButton'
@@ -6,7 +6,8 @@ import { BottomActionBar } from './BottomActionBar'
 import { ThemedText } from './ThemedText'
 import { SearchModal } from './SearchModal'
 import { useAuthGoogle, useStore } from '@/hooks'
-import { useGetUser } from '@/api/api.helpers'
+import React from 'react'
+import { FlashMessage } from './FlashMessage'
 
 type LayoutProps = ViewProps & {
   scrollEnabled?: boolean
@@ -26,6 +27,7 @@ export const Layout = ({ scrollEnabled = true, children, ...rest }: LayoutProps)
         {children}
       </ScrollView>
       <BottomAddButton />
+      <FlashMessage />
       <SearchModal />
       <View style={tw('absolute', { bottom: 0, left: 0 })}>
         {/* <UnsavedChanges.Provider /> */}

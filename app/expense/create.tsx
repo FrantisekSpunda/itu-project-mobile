@@ -1,24 +1,26 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Layout, Heading, Button, Box, Input, BottomActionBar, Select, SelectRef, ThemedText } from '@/components'
+import { Layout, Heading, Button, Box, Input, BottomActionBar, Select, SelectRef, ThemedText, UserImage, Badge, FlashMessage } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
-import { Formik } from 'formik'
+import { Formik, FormikContextType, useFormikContext } from 'formik'
 import { useRouter } from 'expo-router'
 import {
   IconCheck,
   IconCoins,
-  IconEdit,
+  IconExclamationCircleFilled,
   IconFilePencil,
   IconHeading,
   IconPencil,
   IconPlus,
-  IconUser,
+  IconSwitch,
+  IconTrash,
   IconUserDollar,
-  IconUsers,
   IconX,
 } from '@tabler/icons-react-native'
-import { Modal, ScrollView, TextInput, View } from 'react-native'
-import { useGetContacts, usePostExpense } from '@/api/api.helpers'
+import { Modal, ScrollView, TextInput, View, Image, TouchableOpacity } from 'react-native'
+import { useGetContacts, useGetUser, usePostExpense } from '@/api/api.helpers'
+import { formatPrice } from '@/utils'
+import { useStore } from '@/hooks'
 
 const validationSchema = Yup.object().shape({})
 
@@ -29,35 +31,70 @@ export default function ExpenseAdd() {
 
   const priceRef = useRef<TextInput>(null)
   const descriptionRef = useRef<TextInput>(null)
-  const deptorsRef = useRef<SelectRef>(null)
+  const deptorsRef = useRef<View>(null)
   const payerRef = useRef<SelectRef>(null)
 
-  const [deptors, setDeptors] = useState({
-    show: false,
-  })
+  const [deptorsModal, setDeptorsModal] = useState(false)
 
-  const handleSubmit = usePostExpense()
+  const { setStore } = useStore()
 
-  const contactOptions = useGetContacts()[0]?.map((contact) => ({ label: contact.name, value: String(contact.id) })) || []
+  const postExpense = usePostExpense()
+  const handleSubmit = (values: any) => {
+    postExpense(values)
+  }
+
+  const [contacts] = useGetContacts({ ignoreAuthed: false })
+  const contactsOption =
+    contacts.map((contact) => ({
+      label: contact.name,
+      caption: contact?.user?.email,
+      image: <UserImage contact={contact} size="small" />,
+      value: String(contact.id),
+    })) || []
+
+  const [profile] = useGetUser()
+
+  const initialValues = {
+    title: '',
+    price: '',
+    description: '',
+    is_draft: false,
+    payer_id: contactsOption.find((contact) => contact.caption === profile?.email)?.value || '',
+    deptors: [{ price: '', deptor_id: '' }] as DeptorValue[],
+    currency_id: 1,
+  }
+
+  const onCloseModal = (values: typeof initialValues) => {
+    if (!values.deptors.every((deptor) => deptor.deptor_id && String(deptor.price)))
+      setStore('flashMessage', {
+        show: true,
+        style: tw('bgRed'),
+        content: (
+          <View style={tw('flexRow', 'itemsCenter', 'p4', { gap: 12 })}>
+            <IconExclamationCircleFilled size={24} fill="white" />
+            <ThemedText style={tw('textWhite')}>Vyplňte všechna pole</ThemedText>
+          </View>
+        ),
+      })
+    else if (!(values.deptors.reduce((sum: number, deptor) => sum + Number(deptor.price), 0) === Number(values.price)))
+      setStore('flashMessage', {
+        show: true,
+        style: tw('bgRed'),
+        content: (
+          <View style={tw('flexRow', 'itemsCenter', 'p4', { gap: 12 })}>
+            <IconExclamationCircleFilled size={24} fill="white" />
+            <ThemedText style={tw('textWhite')}>Cena výdaje musí být stejná jako součet podílu dlužníků</ThemedText>
+          </View>
+        ),
+      })
+    else setDeptorsModal(false)
+  }
 
   return (
     <Layout scrollEnabled={false}>
       <Heading text="Přidat výdaj" showSearch={false} />
       <Box label="Detail Výdaje" style={tw({ gap: 12 })}>
-        <Formik
-          initialValues={{
-            title: '',
-            price: '',
-            description: '',
-            is_draft: false,
-            payer_id: '',
-            deptors: [] as DeptorValue[],
-            currency_id: 1,
-          }}
-          enableReinitialize
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
+        <Formik initialValues={initialValues} enableReinitialize validationSchema={validationSchema} onSubmit={handleSubmit}>
           {({ handleChange, setFieldValue, handleBlur, handleSubmit, values, errors, touched, dirty }) => (
             <>
               <Input
@@ -78,7 +115,7 @@ export default function ExpenseAdd() {
                 inputProps={{ inputMode: 'numeric' }}
                 focusNext={() => {
                   priceRef.current?.blur()
-                  payerRef.current?.press()
+                  setDeptorsModal(true)
                 }}
                 value={values.price}
                 icon={<IconCoins />}
@@ -86,34 +123,29 @@ export default function ExpenseAdd() {
                 onBlur={handleBlur('price')}
                 error={touched.price && errors.price}
               />
-              <Select
-                ref={payerRef}
-                name="payer_id"
-                label="Zadejte plátce"
-                setValue={setFieldValue}
-                icon={<IconUserDollar />}
-                value={values.payer_id}
-                options={contactOptions}
-              />
               <View
+                ref={deptorsRef}
                 style={tw('wFull', 'rounded', 'border', 'borderLightGray')}
                 onTouchEnd={() => {
-                  setDeptors((prev) => ({ ...prev, show: true }))
-                  if (!values.deptors.length) setFieldValue('deptors', [...values.deptors, { price: '', deptor_id: '' }])
+                  setDeptorsModal(true)
                 }}
               >
                 <View style={tw('wFull', 'flexRow', 'p2')}>
                   <View style={tw('w3_4')}>
                     <ThemedText type="caption">Dlužník</ThemedText>
-                    {values.deptors.map((deptor, i) => (
-                      <ThemedText key={i}>{contactOptions.find((option) => option.value == deptor.deptor_id)?.label || ''}</ThemedText>
-                    ))}
+                    {values.deptors
+                      .filter((deptor) => deptor.deptor_id)
+                      .map((deptor, i) => (
+                        <ThemedText key={i}>{contactsOption.find((option) => option.value == deptor.deptor_id)?.label || ''}</ThemedText>
+                      ))}
                   </View>
                   <View style={tw('w1_4')}>
                     <ThemedText type="caption">Cena</ThemedText>
-                    {values.deptors.map((deptor, i) => (
-                      <ThemedText key={i}>{deptor.price}</ThemedText>
-                    ))}
+                    {values.deptors
+                      .filter((deptor) => deptor.price)
+                      .map((deptor, i) => (
+                        <ThemedText key={i}>{deptor.price}</ThemedText>
+                      ))}
                   </View>
                 </View>
 
@@ -121,17 +153,8 @@ export default function ExpenseAdd() {
                   <Button label="Upravit" icon={<IconPencil />} type="transparent" />
                 </View>
               </View>
-              <Modal
-                visible={deptors.show}
-                animationType="slide"
-                onRequestClose={() => setDeptors((prev) => ({ ...prev, show: false }))}
-                transparent
-                style={tw('relative')}
-              >
-                <View
-                  onTouchEnd={() => setDeptors((prev) => ({ ...prev, show: false }))}
-                  style={tw('wFull', 'bgGray', { top: 0, left: 0, opacity: 0.6, height: 128 })}
-                />
+              <Modal visible={deptorsModal} animationType="slide" onRequestClose={() => onCloseModal(values)} transparent style={tw('relative')}>
+                <View onTouchEnd={() => onCloseModal(values)} style={tw('wFull', 'bgGray', { top: 0, left: 0, opacity: 0.6, height: 128 })} />
                 <Box style={tw('hFull', { gap: 12 })}>
                   <ThemedText type="heading2">Přidat dlužníky</ThemedText>
                   <ScrollView>
@@ -144,7 +167,7 @@ export default function ExpenseAdd() {
                           setValue={setFieldValue}
                           icon={<IconUserDollar />}
                           value={values.deptors[i].deptor_id}
-                          options={contactOptions.filter(
+                          options={contactsOption.filter(
                             (contact) =>
                               contact.value === values.deptors[i].deptor_id || !values.deptors.map((value) => value.deptor_id).includes(contact.value)
                           )}
@@ -153,36 +176,76 @@ export default function ExpenseAdd() {
                           style={tw('w1_3')}
                           name={`deptors[${i}]price`}
                           label="Částka"
-                          inputProps={{ inputMode: 'numeric' }}
+                          inputProps={{ inputMode: 'decimal' }}
                           value={values.deptors[i].price}
                           onChange={handleChange(`deptors[${i}]price`)}
                           onBlur={handleBlur(`deptors[${i}]price`)}
                           error={touched.price && errors.price}
                         />
-                        <IconX
-                          size={24}
-                          style={tw('textRed')}
+                        <TouchableOpacity
+                          style={tw({ width: 30, height: 30 }, 'flex', 'itemsCenter', 'justifyCenter', 'roundedFull', 'bgLightGray')}
                           onPress={() =>
                             setFieldValue(
                               'deptors',
                               values.deptors.filter((_, index) => index != i)
                             )
                           }
-                        />
+                        >
+                          <IconTrash size={18} style={tw('textBlack')} />
+                        </TouchableOpacity>
                       </View>
                     ))}
+                    <View style={tw('flexRow', 'mB3', { gap: 12 })}>
+                      <Badge size="small" label={`Cena výdaje: ${formatPrice(Number(values.price))}`} />
+                      <Badge size="small" label={`Součet: ${formatPrice(values.deptors.reduce((sum: any, deptor) => sum + Number(deptor.price), 0))}`} />
+                    </View>
+                    <View style={tw('flexRow', 'justifyEnd', 'borderT', 'borderLightGray', 'pT3', { gap: 8 })}>
+                      <Button
+                        label="Rozdělit rovnoměrně"
+                        icon={<IconSwitch />}
+                        type="white"
+                        onPress={() => {
+                          values.deptors.forEach((_, i) => {
+                            if (i == 0)
+                              setFieldValue(
+                                `deptors[${i}]price`,
+                                String(Number(values.price) - (values.deptors.length - 1) * Math.floor(Number(values.price) / values.deptors.length))
+                              )
+                            else setFieldValue(`deptors[${i}]price`, String(Math.floor(Number(values.price) / values.deptors.length)))
+                          })
+                        }}
+                      />
+                      <Button
+                        label="Přidat"
+                        icon={<IconPlus />}
+                        type="primary"
+                        onPress={() =>
+                          setFieldValue('deptors', [
+                            ...values.deptors,
+                            {
+                              price: '',
+                              deptor_id: '',
+                            },
+                          ])
+                        }
+                      />
+                    </View>
                   </ScrollView>
                   <View style={tw('flexRow', 'justifyEnd', 'pY3', 'pX8', 'wFull', 'absolute', { bottom: 128, right: 0, gap: 16 })}>
-                    <Button label="Zavřít" icon={<IconX />} type="white" onPress={() => setDeptors({ show: false })} />
-                    <Button
-                      label="Přidat dlužníka"
-                      icon={<IconPlus />}
-                      type="primary"
-                      onPress={() => setFieldValue('deptors', [...values.deptors, { price: '', deptor_id: '' }])}
-                    />
+                    <Button label="Zavřít" icon={<IconX />} type="white" onPress={() => onCloseModal(values)} />
                   </View>
                 </Box>
+                <FlashMessage />
               </Modal>
+              <Select
+                ref={payerRef}
+                name="payer_id"
+                label="Zadejte plátce"
+                setValue={setFieldValue}
+                icon={<IconUserDollar />}
+                value={values.payer_id}
+                options={contactsOption}
+              />
               <Input
                 ref={descriptionRef}
                 name="description"

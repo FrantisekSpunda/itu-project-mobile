@@ -5,16 +5,14 @@ import { getSign } from '@/utils/utils.number'
 import { IconArrowNarrowRight, IconCash, IconCreditCard, IconShoppingCart } from '@tabler/icons-react-native'
 import { Badge } from './Badge'
 import { useRouter } from 'expo-router'
+import { Expense } from '@/api'
+import { formatPrice } from '@/utils'
 
 type SettlementItemProps = TouchableOpacityProps & {
-  payer: {
-    firstName: string
-    lastName: string
-  }
-  amount: number
+  expense: Expense
 }
 
-export const SettlementItem = ({ payer, amount, onPress, ...rest }: SettlementItemProps) => {
+export const SettlementItem = ({ expense, ...rest }: SettlementItemProps) => {
   const { push } = useRouter()
 
   return (
@@ -22,8 +20,7 @@ export const SettlementItem = ({ payer, amount, onPress, ...rest }: SettlementIt
       {...rest}
       style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}
       onPress={(e) => {
-        push('/settlement_detail')
-        if (onPress) onPress(e)
+        push('/')
       }}
     >
       <View style={tw('flexRow', 'itemsCenter')}>
@@ -31,19 +28,19 @@ export const SettlementItem = ({ payer, amount, onPress, ...rest }: SettlementIt
           <IconCash size={18} style={tw('textGreen')} />
           <View style={tw({ opacity: 0.1 }, 'absolute', 'top0', 'roundedFull', 'left0', 'wFull', 'hFull', 'bgGreen')} />
         </View>
-        <View style={tw({ gap: 4 }, 'flexRow', 'itemsCenter')}>
+        <View style={tw({ gap: 4 }, 'flexCol')}>
           <ThemedText>Vyrovnání</ThemedText>
-          <View style={tw('flexRow', 'itemsCenter', 'mL2', { gap: 4 })}>
-            <Badge label="Já" />
+          <View style={tw('flexRow', 'itemsCenter', { gap: 4 })}>
+            <Badge label={expense.settlement.payer.name} />
             <IconArrowNarrowRight size={14} style={tw('textGray')} />
-            <Badge label={`${payer.firstName} ${payer.lastName}`} />
+            <Badge label={expense.settlement.deptor.name} />
           </View>
         </View>
       </View>
       <View style={tw('flexRow', 'itemsCenter')}>
-        <ThemedText style={tw({ '+': 'textGreen', '-': 'textRed', '': 'textGray' }[getSign(amount)] as any, 'mR3')}>
-          {amount > 0 && '+'}
-          {amount} Kč
+        <ThemedText style={tw({ '-': 'textGreen', '+': 'textRed', '': 'textGray' }[getSign(expense.price_calculated)] as any, 'mR3')}>
+          {expense.price_calculated < 0 && '+'}
+          {formatPrice(expense.price_calculated * -1)}
         </ThemedText>
       </View>
     </TouchableOpacity>

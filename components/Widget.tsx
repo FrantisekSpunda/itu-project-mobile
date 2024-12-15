@@ -6,7 +6,7 @@ import { IconArrowNarrowRight, IconCash, IconCoins, IconCreditCard } from '@tabl
 import { View } from 'react-native'
 import { Badge } from './Badge'
 import { Button } from './Button'
-import { OverviewBalance, useGetOverviewBalance } from '@/api'
+import { Contact, OverviewBalance, useGetOverviewBalance } from '@/api'
 import { formatPrice } from '@/utils'
 
 type WidgetDeptProps = BoxProps & {
@@ -34,11 +34,38 @@ Widget.dept = ({ buttons, style, ...rest }: WidgetDeptProps) => {
             Dluží vám: +{formatPrice(balance?.total_owed || 0)}
           </ThemedText>
           <ThemedText type="caption" style={tw('textGray')}>
-            Dlužíte: -{balance?.total_paid || 0}
+            Dlužíte: -{formatPrice(balance?.total_paid || 0)}
           </ThemedText>
         </View>
       </View>
       {buttons && <View style={tw('borderT', 'borderLightGray', 'p3', 'flexRow', 'justifyEnd', { gap: 8 })}>{buttons}</View>}
+    </Box>
+  )
+}
+
+type WidgetContactProps = BoxProps & {
+  contact: Contact
+}
+
+Widget.contact = ({ contact, style, ...rest }: WidgetContactProps) => {
+  return (
+    <Box {...rest} style={[...tw('relative', 'p0', 'borderBlue'), ...(style instanceof Array ? style : [])]}>
+      <View style={tw('p3')}>
+        <IconCoins style={tw({ top: 12, position: 'absolute', right: 12 }, 'textGray')} />
+        <ThemedText>Dluhy s uživatelem {contact.name}</ThemedText>
+        <View style={tw('flexRow', 'itemsBaseline', 'mT3')}>
+          <ThemedText type="heading1" style={tw({ owed: 'textGreen', owe: 'textRed', settled: 'textGray' }[contact.balance_detail.type] as any, 'mR3')}>
+            {contact.balance_detail.type === 'owed' && '+'}
+            {formatPrice(contact.balance_detail.balance * -1)}
+          </ThemedText>
+          <ThemedText type="caption" style={tw('textGray', 'mR3')}>
+            Dluží vám: {formatPrice(Number(contact.balance_detail.total_paid))}
+          </ThemedText>
+          <ThemedText type="caption" style={tw('textGray')}>
+            Dlužíte: {formatPrice(Math.abs(Number(contact.balance_detail.total_dept)))}
+          </ThemedText>
+        </View>
+      </View>
     </Box>
   )
 }

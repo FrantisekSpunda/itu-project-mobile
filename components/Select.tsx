@@ -1,21 +1,10 @@
 import { tw } from '@/utils/utils.tailwind'
 import { FormikHelpers, useFormikContext } from 'formik'
 import React, { forwardRef, JSXElementConstructor, ReactElement, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import {
-  TextInput,
-  Text,
-  View,
-  TouchableOpacity,
-  Keyboard,
-  ViewProps,
-  TextInputProps,
-  FlatList,
-  NativeSyntheticEvent,
-  TextInputChangeEventData,
-} from 'react-native'
+import { TextInput, View, TouchableOpacity, ViewProps, TextInputProps, FlatList } from 'react-native'
 import { ThemedText } from './ThemedText'
 
-export type SelectOption = { label: string; value: string }
+export type SelectOption = { label: string; value: string; image?: React.ReactNode; caption?: string }
 
 export type SelectRef = View & { press?: any }
 
@@ -32,11 +21,12 @@ type SelectProps<T extends boolean> = ViewProps & {
   onBlur?: (params?: any) => any
   error?: any
   style?: any[]
+  onChange?: (item: SelectOption) => any
 }
 
 export const Select = forwardRef(
   <T extends boolean>(
-    { name, label, icon, value, setValue, style, onBlur, searchable, options, multiple, error }: SelectProps<T>,
+    { name, label, icon, value, setValue, style, onChange, searchable, options, multiple, error }: SelectProps<T>,
     globalRef: React.ForwardedRef<SelectRef>
   ) => {
     const ref = useRef<SelectRef>(null)
@@ -49,25 +39,26 @@ export const Select = forwardRef(
     const [filled, setFilled] = useState(false)
 
     const setState = useCallback(
-      (focused: boolean, value?: string) => {
+      (focused: boolean, value?: boolean) => {
         setFilled(!!(focused || value))
         setOptionsVisible(focused)
       },
       [value]
     )
 
+    // Change select state
     useEffect(() => {
-      setState(false)
+      setState(false, !!value)
     }, [formik.initialValues[name]])
 
     const handleSelect = (item: SelectOption) => {
+      if (onChange) onChange(item)
       if (setValue) setValue(name, multiple ? [...value, item.value] : item.value === 'custom' ? item.label : item.value)
       if (!multiple) setOptionsVisible(false)
       if (searchable) {
         searchable.onChange(item.label)
       }
-      setState(false, item.value)
-      console.log('value', value)
+      setState(false, !!item.value)
     }
 
     const handleRemove = (item: string) => {
@@ -94,9 +85,8 @@ export const Select = forwardRef(
     }, [multiple, options, value, searchable?.value])
 
     return (
-      <View style={[...tw('relative', 'wFull'), ...(style || [])]}>
+      <View ref={ref} style={[...tw('relative', 'wFull'), ...(style || [])]}>
         <TouchableOpacity
-          ref={ref}
           style={tw('flexRow', 'itemsCenter', 'rounded', 'border', 'borderLightGray', 'pX3')}
           onPress={() => {
             setOptionsVisible((prev) => !prev)
@@ -174,10 +164,22 @@ export const Select = forwardRef(
                   <ThemedText style={tw('textCenter', 'pY6')}>{item.label}</ThemedText>
                 ) : (
                   <TouchableOpacity
-                    style={tw('pX4', 'pY3', 'borderLightGray', index + 1 != options.length ? 'borderB' : {}, item.value === value ? 'bgLightGray' : 'bgWhite')}
+                    style={tw(
+                      'flexRow',
+                      'itemsCenter',
+                      'pX4',
+                      'pY3',
+                      'borderLightGray',
+                      index + 1 != options.length ? 'borderB' : {},
+                      item.value === value ? 'bgLightGray' : 'bgWhite'
+                    )}
                     onPress={() => handleSelect(item)}
                   >
-                    <ThemedText>{item.value === 'custom' ? `Přidat "${item.label}"` : item.label}</ThemedText>
+                    {!!item.image && item.image}
+                    <View style={tw('flexCol', 'h6', 'justifyCenter')}>
+                      <ThemedText type="body2">{item.value === 'custom' ? `Přidat "${item.label}"` : item.label}</ThemedText>
+                      {item.caption && <ThemedText type="caption">{item.caption}</ThemedText>}
+                    </View>
                   </TouchableOpacity>
                 )
               }

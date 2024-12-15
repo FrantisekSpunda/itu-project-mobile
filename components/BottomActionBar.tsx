@@ -11,10 +11,11 @@ type BottomActionBarProps = {
 
 export const BottomActionBar = ({ show, children }: BottomActionBarProps) => {
   const { setStore } = useStore()
+  const pathname = usePathname()
 
   useEffect(() => {
     setStore('form.bottomActionBar', show ? children : null)
-  }, [show])
+  }, [show, pathname])
 
   return null
 }

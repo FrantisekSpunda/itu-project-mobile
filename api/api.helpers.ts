@@ -9,7 +9,7 @@ export const useGetUser = () => {
   const { store } = useStore()
 
   const response = useQuery({
-    queryKey: ['profile', 'get'],
+    queryKey: ['get', 'profile'],
     queryFn: () =>
       Api.get('profile', {
         headers: {
@@ -36,7 +36,9 @@ export const usePutUser = () => {
       })
 
       if (response) {
-        queryClient.invalidateQueries({ queryKey: ['profile'] })
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey.includes('profile'),
+        })
       }
     },
     [store.auth.token]
@@ -47,7 +49,7 @@ export const useGetOverviewBalance = () => {
   const { store } = useStore()
 
   const response = useQuery({
-    queryKey: ['overview/balance', 'get'],
+    queryKey: ['get', 'overview/balance'],
     queryFn: () =>
       Api.get('overview/balance', {
         headers: {
@@ -65,7 +67,7 @@ export const useGetContact = (contact_id: string | number) => {
   const { store } = useStore()
 
   const response = useQuery({
-    queryKey: ['contacts', contact_id, 'get'],
+    queryKey: ['get', 'contacts', contact_id],
     queryFn: () =>
       Api.get(`contacts/${Number(contact_id)}`, {
         headers: {
@@ -96,25 +98,27 @@ export const usePutContact = (contact_id: string | number) => {
       )
 
       if (response) {
-        queryClient.invalidateQueries({ queryKey: ['contacts', contact_id, 'get'] })
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey.includes('contacts') && query.queryKey.includes('contact_id'),
+        })
       }
     },
     [store.auth.token]
   )
 }
 
-export const useGetContacts = (filter?: Balance['type'][]) => {
+export const useGetContacts = ({ ignoreAuthed = true, filter }: { ignoreAuthed?: boolean; filter?: Balance['type'][] } = {}) => {
   const { store } = useStore()
 
   const response = useQuery({
-    queryKey: ['contacts', 'get', filter],
+    queryKey: ['get', 'contacts', filter, ignoreAuthed],
     queryFn: () =>
       Api.get('contacts', {
         headers: {
           Authorization: `Bearer ${store.auth.token}`,
         },
         params: {
-          ignoreAuthed: true,
+          ...(ignoreAuthed ? { ignoreAuthed: true } : {}),
           type: filter,
           limit: 99999,
         },
@@ -130,7 +134,7 @@ export const useGetContactsUsers = (search: string) => {
   const { store } = useStore()
 
   const response = useQuery({
-    queryKey: ['contacts', 'users', 'get', search],
+    queryKey: ['get', 'contacts', 'users', search],
     queryFn: () =>
       Api.get('contacts/users', {
         headers: {
@@ -152,7 +156,7 @@ export const useGetExpenses = () => {
   const { store } = useStore()
 
   const response = useQuery({
-    queryKey: ['expenses', 'get'],
+    queryKey: ['get', 'expenses'],
     queryFn: () =>
       Api.get('expenses', {
         headers: {
@@ -164,6 +168,56 @@ export const useGetExpenses = () => {
 
   const expenses = response.data?.data.data || []
   return [expenses, response] as [typeof expenses, typeof response]
+}
+
+export const usePostSettlementsPreview = (contact_id: number) => {
+  const { store } = useStore()
+
+  const response = useQuery({
+    queryKey: ['post', 'settlements/preview'],
+    queryFn: () =>
+      Api.post(
+        'settlements/preview',
+        { contact_id: contact_id },
+        {
+          headers: {
+            Authorization: `Bearer ${store.auth.token}`,
+          },
+        }
+      ),
+    enabled: !!store.auth.token,
+  })
+
+  const settlementPreview = response.data?.data
+  return [settlementPreview, response] as [typeof settlementPreview, typeof response]
+}
+
+export const usePostSettlementsMarkAsPaid = () => {
+  const { back } = useRouter()
+  const { store } = useStore()
+  const queryClient = useQueryClient()
+
+  return useCallback(
+    async (contact_id: number) => {
+      const response = await Api.post(
+        'settlements/mark-as-paid',
+        { contact_id },
+        {
+          headers: {
+            Authorization: `Bearer ${store.auth.token}`,
+          },
+        }
+      )
+
+      if (response) {
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey.includes('get'),
+        })
+        back()
+      }
+    },
+    [store.auth.token]
+  )
 }
 
 export const usePostContacts = () => {
@@ -184,7 +238,9 @@ export const usePostContacts = () => {
       )
 
       if (response) {
-        queryClient.invalidateQueries({ queryKey: ['contacts'] })
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey.includes('contacts'),
+        })
         back()
       }
     },
@@ -206,7 +262,9 @@ export const usePostExpense = () => {
       })
 
       if (response) {
-        queryClient.invalidateQueries({ queryKey: ['get'] })
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey.includes('get'),
+        })
         back()
       }
     },

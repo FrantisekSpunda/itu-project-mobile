@@ -9,11 +9,36 @@ export type apiGetEndpoints = {
 export type apiPostEndpoints = {
   contacts: Contact
   expenses: any
+  'settlements/preview': SettlementPreview
+  'settlements/mark-as-paid': any
 }
 
 export type apiPutEndpoints = {
   profile: { profile: User }
 } & Record<`contacts/${number}`, { contact: Contact }>
+
+export type SettlementPreview = {
+  currency: any
+  payer: Participant
+  deptor: Participant
+  price: number
+  expenses: Expense[]
+  qrcode: string // Base64-encoded image string
+}
+
+export type Settlement = {
+  id: number
+  deptor_id: number
+  price: number
+  payer_id: number
+  created_at: string
+  updated_at: string
+  is_paid: boolean
+  qrcode: string
+  token: string
+  payer: Contact
+  deptor: Contact
+}
 
 export type User = {
   id: number
@@ -41,11 +66,24 @@ export type Contact = {
   user_id: number
   user: User
   balance_detail: Balance
+  expenses?: Expense[]
   created_at: string
   updated_at: string
 }
 
-type Deptor = {
+export type Participant = {
+  id: number
+  owner_id: number
+  user_id: number
+  name: string
+  created_at: string
+  updated_at: string
+  bank_iban: string | null
+  bank_account: string | null
+  user?: User // Optional if included
+}
+
+export type Deptor = {
   id: number
   expense_id: number
   deptor_id: number
@@ -69,6 +107,8 @@ export type Expense = {
   price_calculated: number
   title: string
   type: 'payment' | 'settlement'
+  settlement: Settlement
+  settlement_id: number
   updated_at: string
   user: User
   user_id: number

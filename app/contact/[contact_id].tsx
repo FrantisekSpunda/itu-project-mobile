@@ -21,24 +21,26 @@ export default function ContactDetail() {
   const { push, back } = useRouter()
   const { contact_id } = useLocalSearchParams<{ contact_id: string }>()
 
-  const [contact] = useGetContact(16)
+  const [contact] = useGetContact(Number(contact_id))
 
   const bankAccountRef = useRef<TextInput>(null)
 
-  // const filters: { label: string; value: 'all' | 'expenses' | 'settlements' }[] = [
-  //   { label: 'Vše', value: 'all' },
-  //   { label: 'Výdaje', value: 'expenses' },
-  //   { label: 'Vyrovnání', value: 'settlements' },
-  // ]
+  const filters: { label: string; value: 'all' | 'expenses' | 'settlements' }[] = [
+    { label: 'Vše', value: 'all' },
+    { label: 'Výdaje', value: 'expenses' },
+    { label: 'Vyrovnání', value: 'settlements' },
+  ]
 
-  // const [filter, setFilter] = useState<(typeof filters)[0]['value']>('all')
+  const [filter, setFilter] = useState<(typeof filters)[0]['value']>('all')
 
   const handleSubmit = usePutContact(contact_id)
+
+  if (!contact) return null
 
   return (
     <Layout>
       <Heading text="Detail kontaktu" showSearch={false} />
-      {/* <Widget.dept style={tw('borderBlue')} /> */}
+      <Widget.contact contact={contact} />
       <Box label="Základní informace" style={tw('borderTransparent', { gap: 12 })}>
         <Formik
           initialValues={{
@@ -79,7 +81,7 @@ export default function ContactDetail() {
           )}
         </Formik>
       </Box>
-      {/* <View style={tw('flexRow', 'wFull', { gap: 12 })}>
+      <View style={tw('flexRow', 'wFull', { gap: 12 })}>
         {filters.map((item, i) => (
           <Badge
             key={i}
@@ -90,16 +92,14 @@ export default function ContactDetail() {
           />
         ))}
       </View>
-      <List label="Listopad 2024">
-        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} price={-412} />
-        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} price={-412} />
-        <SettlementItem payer={{ firstName: 'Pepa', lastName: 'B' }} amount={1000} />
+      <List label="Poslední výdaje s tímto uživatelem">
+        {(contact.expenses || []).map((expense, i) =>
+          expense.type === 'payment' ? <ExpenseItem key={i} expense={expense} /> : <SettlementItem key={i} expense={expense} />
+        )}
       </List>
-      <List label="Říjen 2024">
-        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} price={412} />
-        <ExpenseItem label="Lidl nákup" payer={{ firstName: 'František', lastName: 'Špunda' }} price={412} />
-        <SettlementItem payer={{ firstName: 'Pepa', lastName: 'Špunda' }} amount={-1000} />
-      </List> */}
+      <BottomActionBar show={contact}>
+        <Button type="white" label="Vyrovnat se" icon={<IconCreditCard />} onPress={() => push(`/settlement/create/${contact.id}`)} />
+      </BottomActionBar>
     </Layout>
   )
 }

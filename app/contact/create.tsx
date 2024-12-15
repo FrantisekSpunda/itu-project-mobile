@@ -1,14 +1,9 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { Layout, Heading, Button, Box, Input, BottomActionBar, Select, SelectRef } from '@/components'
+import { Layout, Heading, Button, Box, Input, BottomActionBar, Select, SelectRef, UserImage } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
-import { useRouter } from 'expo-router'
 import { IconCheck } from '@tabler/icons-react-native'
-import { TextInput } from 'react-native'
-import { Api } from '@/api'
-import { useStore } from '@/hooks'
-import { useQueryClient } from '@tanstack/react-query'
 import { useGetContactsUsers, usePostContacts } from '@/api/api.helpers'
 
 const validationSchema = Yup.object().shape({
@@ -42,7 +37,12 @@ export default function ContactAdd() {
                 value={values.name}
                 searchable={{ value: search, creatable: true, onChange: (text) => setSearch(text) }}
                 setValue={setFieldValue}
-                options={users.map((user) => ({ value: String(user.id), label: `${user.first_name} ${user.last_name}` }))}
+                options={users.map((user) => ({
+                  value: String(user.id),
+                  label: `${user.first_name} ${user.last_name}`,
+                  caption: user.email,
+                  image: <UserImage contact={{ name: `${user.first_name} ${user.last_name}`, user: user }} />,
+                }))}
               />
               <BottomActionBar show={dirty}>
                 <Button type="primary" label="Uložit" icon={<IconCheck />} onPress={() => handleSubmit()} />

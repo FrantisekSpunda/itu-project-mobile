@@ -15,7 +15,7 @@ import { useGetContacts, useGetExpenses, useGetOverviewBalance } from '@/api/api
 export default function Overview() {
   const { push } = useRouter()
 
-  const [contacts] = useGetContacts(['owe', 'owed'])
+  const [contacts] = useGetContacts({ filter: ['owe', 'owed'] })
   const [expenses] = useGetExpenses()
 
   return (
@@ -42,9 +42,7 @@ export default function Overview() {
         label="Výdaje za poslední měsíc"
         buttons={<Button type="transparent" label="Výdaje" icon={<IconExternalLink />} onPress={() => push('/(tabs)/expenses')} />}
       >
-        {expenses.map((expense, i) => (
-          <ExpenseItem key={i} expense={expense} />
-        ))}
+        {expenses.map((expense, i) => (expense.type === 'payment' ? <ExpenseItem key={i} expense={expense} /> : <SettlementItem key={i} expense={expense} />))}
       </List>
     </Layout>
   )
