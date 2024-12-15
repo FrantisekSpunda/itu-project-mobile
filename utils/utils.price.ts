@@ -4,8 +4,6 @@ import { getSign } from './utils.number'
 export const formatPrice = (amount: number, type?: Balance['type'], currency: string = 'CZK', language: string = 'cz') => {
   const filledType = type || ({ '+': 'owed', '-': 'owe', '': 'settled' }[getSign(amount)] as Balance['type'])
 
-  console.log(amount)
-
   const formatter = new Intl.NumberFormat(language, {
     style: 'currency',
     currency: currency,

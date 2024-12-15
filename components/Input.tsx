@@ -17,10 +17,11 @@ type InputPros = ViewProps & {
   error?: any
   focusNext?: () => any
   style?: any[]
+  readOnly?: boolean
 }
 
 export const Input = forwardRef<TextInput, InputPros>(
-  ({ name, type = 'off', inputProps = {}, containerProps = {}, label, icon, value, onChange, onBlur, error, focusNext, ...rest }, globalRef) => {
+  ({ name, type = 'off', readOnly, inputProps = {}, containerProps = {}, label, icon, value, onChange, onBlur, error, focusNext, ...rest }, globalRef) => {
     const ref = useRef<TextInput>(null)
 
     useImperativeHandle(globalRef, () => ref.current as TextInput)
@@ -45,7 +46,10 @@ export const Input = forwardRef<TextInput, InputPros>(
               ref.current?.focus()
             }, 100)
           }}
-          style={[...tw('flexRow', 'itemsCenter', 'rounded', 'border', 'borderLightGray', 'pX3', 'wFull'), ...((containerProps.style as any[]) || [])]}
+          style={[
+            ...tw('flexRow', 'itemsCenter', 'rounded', 'border', 'borderLightGray', 'pX3', 'wFull', ...(readOnly ? (['bgLightGray', 'opacity50'] as any) : [])),
+            ...((containerProps.style as any[]) || []),
+          ]}
         >
           {!!icon && React.cloneElement(icon, { style: tw('textBlack', icon.props.style, 'mR2'), strokeWidth: 2, size: 24 })}
 
@@ -64,6 +68,7 @@ export const Input = forwardRef<TextInput, InputPros>(
                   }
                 : {})}
               ref={ref}
+              readOnly={readOnly}
               value={value}
               onChangeText={onChange}
               onFocus={() => setState(true)}

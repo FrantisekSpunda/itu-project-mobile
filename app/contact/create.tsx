@@ -14,10 +14,10 @@ export default function ContactAdd() {
   const initialValues = {
     name: '',
   }
-  const submitContact = usePostContacts()
   const [search, setSearch] = useState('')
   const [users] = useGetContactsUsers(search)
 
+  const submitContact = usePostContacts()
   const handleSubmit = (values: typeof initialValues) => {
     const selectedUser = Number(values.name) ? users.find((user) => user.id === Number(values.name)) : null
 

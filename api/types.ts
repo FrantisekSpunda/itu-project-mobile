@@ -4,10 +4,11 @@ export type apiGetEndpoints = {
   expenses: { data: Expense[] }
   'overview/balance': OverviewBalance
   'contacts/users': { users: { data: User[] } }
-} & Record<`contacts/${number}`, { contact: Contact }>
+} & Record<`contacts/${number}`, { contact: Contact }> &
+  Record<`expenses/${number}`, { expense: Expense }>
 
 export type apiPostEndpoints = {
-  contacts: Contact
+  contacts: { contacts: Contact[] }
   expenses: any
   'settlements/preview': SettlementPreview
   'settlements/mark-as-paid': any
@@ -38,6 +39,15 @@ export type Settlement = {
   token: string
   payer: Contact
   deptor: Contact
+  details: {
+    deptor_id: string
+    expense_id: string
+    expense: Expense
+    id: string
+    price: string
+    updated_at: string
+    created_at: string
+  }[]
 }
 
 export type User = {
@@ -68,6 +78,8 @@ export type Contact = {
   balance_detail: Balance
   expenses?: Expense[]
   created_at: string
+  bank_account: string | null
+  bank_iban: string | null
   updated_at: string
 }
 

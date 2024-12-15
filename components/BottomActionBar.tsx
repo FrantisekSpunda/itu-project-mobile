@@ -21,14 +21,22 @@ export const BottomActionBar = ({ show, children }: BottomActionBarProps) => {
 }
 
 BottomActionBar.Provider = () => {
-  const { store, setStore } = useStore()
-  const pathname = usePathname()
-
-  useEffect(() => {
-    setStore('form.bottomActionBar', null)
-  }, [pathname])
+  const { store } = useStore()
 
   if (!store.form.bottomActionBar) return null
 
   return <View style={tw('flexRow', 'bgWhite', 'wFull', 'pY3', 'pX8', 'justifyEnd', 'z100', { gap: 16 })}>{store.form.bottomActionBar}</View>
+}
+
+export const useHideBottomActionBar = () => {
+  const { setStore } = useStore()
+  const pathname = usePathname()
+
+  useEffect(() => {
+    // const timeout = setTimeout(() => {
+    // }, 500)
+    setStore('form.bottomActionBar', null)
+
+    // return clearTimeout(timeout)
+  }, [pathname])
 }

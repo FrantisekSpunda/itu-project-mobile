@@ -40,20 +40,6 @@ export const useAuthGoogle = () => {
         saveAuthToken(token)
         setStore('auth', {
           token,
-          user: {
-            avatar: user.avatar,
-            email: user.email,
-            bankAccount: user.bank_account,
-            bankIban: user.bank_iban,
-            currencyId: user.currency_id,
-            emailNotificationsOn: user.email_notifications_on,
-            firstName: user.first_name,
-            lastName: user.last_name,
-            googleId: user.google_id,
-            id: user.id,
-            updatedAt: user.updated_at,
-            createdAt: user.created_at,
-          },
         })
         console.log('token načten z google authentikace')
       } catch (error: any) {

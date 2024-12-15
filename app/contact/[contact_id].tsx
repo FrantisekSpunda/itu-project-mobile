@@ -4,7 +4,7 @@ import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
 import { Formik } from 'formik'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { IconCheck, IconCreditCard } from '@tabler/icons-react-native'
+import { IconCheck, IconCreditCard, IconPencil } from '@tabler/icons-react-native'
 import { TextInput, View } from 'react-native'
 import { Contact, useGetContact, usePutContact } from '@/api'
 import { AutoSubmit } from './../../components/AutoSubmit'
@@ -12,9 +12,8 @@ import { AutoSubmit } from './../../components/AutoSubmit'
 const validationSchema = Yup.object().shape({
   id: Yup.string().required(),
   name: Yup.string().required('Jméno je povinné').min(2, 'Jméno musí mít alespoň 2 znaky'),
-  bank_iban: Yup.string()
-    .optional()
-    .matches(/^\d{1,10}\/\d{4}$/, 'IBAN musí obsahovat pouze velká písmena a číslice'),
+  bank_iban: Yup.string().optional(),
+  bank_account: Yup.string().optional(),
 })
 
 export default function ContactDetail() {
@@ -24,14 +23,6 @@ export default function ContactDetail() {
   const [contact] = useGetContact(Number(contact_id))
 
   const bankAccountRef = useRef<TextInput>(null)
-
-  const filters: { label: string; value: 'all' | 'expenses' | 'settlements' }[] = [
-    { label: 'Vše', value: 'all' },
-    { label: 'Výdaje', value: 'expenses' },
-    { label: 'Vyrovnání', value: 'settlements' },
-  ]
-
-  const [filter, setFilter] = useState<(typeof filters)[0]['value']>('all')
 
   const handleSubmit = usePutContact(contact_id)
 
@@ -45,8 +36,9 @@ export default function ContactDetail() {
         <Formik
           initialValues={{
             id: String(contact_id),
-            name: contact?.name || '',
-            bank_iban: '',
+            name: contact.name,
+            bank_iban: (contact.user ? contact.user.bank_iban : contact.bank_iban) || '',
+            bank_account: (contact.user ? contact.user.bank_account : contact.bank_account) || '',
           }}
           enableReinitialize
           validationSchema={validationSchema}
@@ -63,41 +55,42 @@ export default function ContactDetail() {
                 onChange={handleChange('name')}
                 onBlur={handleBlur('name')}
                 focusNext={() => bankAccountRef.current?.focus()}
+                readOnly={!!contact.user}
                 error={touched.name && errors.name}
               />
               <Input
                 ref={bankAccountRef}
+                name="bank_account"
+                label="Účet banky"
+                value={values.bank_account}
+                onChange={handleChange('bank_account')}
+                onBlur={handleBlur('bank_account')}
+                readOnly={!!contact.user}
+                error={touched.bank_account && errors.bank_account}
+              />
+              <Input
+                ref={bankAccountRef}
                 name="bank_iban"
-                label="Bankovní účet"
+                label="IBAN číslo účtu"
                 value={values.bank_iban}
                 onChange={handleChange('bank_iban')}
                 onBlur={handleBlur('bank_iban')}
+                readOnly={!!contact.user}
                 error={touched.bank_iban && errors.bank_iban}
               />
-              <BottomActionBar show={true}>
+              <BottomActionBar show={values}>
                 <Button type="white" label="Vyrovnat se" icon={<IconCreditCard />} onPress={() => push('/settlement/create')} />
               </BottomActionBar>
             </>
           )}
         </Formik>
       </Box>
-      <View style={tw('flexRow', 'wFull', { gap: 12 })}>
-        {filters.map((item, i) => (
-          <Badge
-            key={i}
-            size="medium"
-            label={item.label}
-            style={filter == item.value ? tw('bgLightBlue') : tw('bgWhite')}
-            onPress={() => setFilter(item.value)}
-          />
-        ))}
-      </View>
       <List label="Poslední výdaje s tímto uživatelem">
         {(contact.expenses || []).map((expense, i) =>
           expense.type === 'payment' ? <ExpenseItem key={i} expense={expense} /> : <SettlementItem key={i} expense={expense} />
         )}
       </List>
-      <BottomActionBar show={contact}>
+      <BottomActionBar show={contact.balance_detail.balance}>
         <Button type="white" label="Vyrovnat se" icon={<IconCreditCard />} onPress={() => push(`/settlement/create/${contact.id}`)} />
       </BottomActionBar>
     </Layout>

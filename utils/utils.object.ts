@@ -139,3 +139,27 @@ export function flatten(object: GenericObject) {
   traverseAndFlatten(object, container)
   return container
 }
+
+/**
+ * @brief Convert object to formData for form send
+ *
+ * @param obj
+ * @param form
+ * @param namespace
+ * @returns
+ */
+export const objectToFormData = (data: Record<string, any>, form = new FormData(), namespace = '') => {
+  for (let key in data) {
+    if (data.hasOwnProperty(key)) {
+      const value = data[key]
+      const formKey = namespace ? `${namespace}[${key}]` : key
+
+      if (typeof value === 'object' && !(value instanceof File || value instanceof Blob)) {
+        objectToFormData(value, form, formKey)
+      } else {
+        form.append(formKey, value)
+      }
+    }
+  }
+  return form
+}

@@ -129,12 +129,6 @@ export const Select = forwardRef(
                   onFocus={() => {
                     setState(true)
                   }}
-                  // onBlur={(e) => {
-                  //   if (onBlur) onBlur(e)
-                  //   setState(false)
-                  //   console.log();
-
-                  // }}
                   value={searchable.value}
                   style={[...tw('pB2', 'p0', 'pL0', 'textBody1', 'fontMedium', 'wFull'), ...(filled ? tw('pB3') : tw('h0', 'pB2'))]}
                 />

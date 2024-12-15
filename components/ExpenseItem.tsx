@@ -19,7 +19,7 @@ export const ExpenseItem = ({ expense, ...rest }: ExpenseItemProps) => {
       {...rest}
       style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}
       onPress={(e) => {
-        expense.is_draft ? push('/expense/create') : push('/expense/[expense_id]')
+        expense.is_draft ? push('/expense/create') : push(`/expense/${expense.id}`)
       }}
     >
       <View style={tw('flexRow', 'itemsCenter')}>

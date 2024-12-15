@@ -2,8 +2,9 @@ import { useStore } from '@/hooks'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Api } from './api.service'
 import { useCallback } from 'react'
-import { useRouter } from 'expo-router'
+import { router, useRouter } from 'expo-router'
 import { Balance, Contact, User } from './types'
+import { objectToFormData } from '@/utils'
 
 export const useGetUser = () => {
   const { store } = useStore()
@@ -37,7 +38,7 @@ export const usePutUser = () => {
 
       if (response) {
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey.includes('profile'),
+          queryKey: ['get'],
         })
       }
     },
@@ -86,20 +87,16 @@ export const usePutContact = (contact_id: string | number) => {
   const queryClient = useQueryClient()
 
   return useCallback(
-    async (contact: { name: string }) => {
-      const response = await Api.put(
-        `contacts/${Number(contact_id)}`,
-        { name: contact.name },
-        {
-          headers: {
-            Authorization: `Bearer ${store.auth.token}`,
-          },
-        }
-      )
+    async (contact: any) => {
+      const response = await Api.put(`contacts/${Number(contact_id)}`, contact, {
+        headers: {
+          Authorization: `Bearer ${store.auth.token}`,
+        },
+      })
 
       if (response) {
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey.includes('contacts') && query.queryKey.includes('contact_id'),
+          queryKey: ['get'],
         })
       }
     },
@@ -112,6 +109,7 @@ export const useGetContacts = ({ ignoreAuthed = true, filter }: { ignoreAuthed?:
 
   const response = useQuery({
     queryKey: ['get', 'contacts', filter, ignoreAuthed],
+    staleTime: 0,
     queryFn: () =>
       Api.get('contacts', {
         headers: {
@@ -152,15 +150,19 @@ export const useGetContactsUsers = (search: string) => {
   return [users, response] as [typeof users, typeof response]
 }
 
-export const useGetExpenses = () => {
+export const useGetExpenses = (type?: 'all' | 'payment' | 'settlement') => {
   const { store } = useStore()
 
   const response = useQuery({
-    queryKey: ['get', 'expenses'],
+    queryKey: ['get', 'expenses', type],
+    staleTime: 0,
     queryFn: () =>
       Api.get('expenses', {
         headers: {
           Authorization: `Bearer ${store.auth.token}`,
+        },
+        params: {
+          type: type === 'all' ? '' : type,
         },
       }),
     enabled: !!store.auth.token,
@@ -168,6 +170,25 @@ export const useGetExpenses = () => {
 
   const expenses = response.data?.data.data || []
   return [expenses, response] as [typeof expenses, typeof response]
+}
+
+export const useGetExpense = (expense_id: number) => {
+  const { store } = useStore()
+
+  const response = useQuery({
+    queryKey: ['get', 'expenses', expense_id],
+    queryFn: () =>
+      Api.get(`expenses/${expense_id}`, {
+        headers: {
+          Authorization: `Bearer ${store.auth.token}`,
+        },
+        params: { expense_id },
+      }),
+    enabled: !!store.auth.token,
+  })
+
+  const expense = response.data?.data.expense
+  return [expense, response] as [typeof expense, typeof response]
 }
 
 export const usePostSettlementsPreview = (contact_id: number) => {
@@ -211,7 +232,7 @@ export const usePostSettlementsMarkAsPaid = () => {
 
       if (response) {
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey.includes('get'),
+          queryKey: ['get'],
         })
         back()
       }
@@ -239,9 +260,9 @@ export const usePostContacts = () => {
 
       if (response) {
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey.includes('contacts'),
+          queryKey: ['get'],
         })
-        back()
+        router.replace(`/contact/${response.data.contacts[0].id}`)
       }
     },
     [store.auth.token]
@@ -255,16 +276,20 @@ export const usePostExpense = () => {
 
   return useCallback(
     async (expense: any) => {
+      // const formData = objectToFormData(expense)
+
       const response = await Api.post('expenses', expense, {
         headers: {
           Authorization: `Bearer ${store.auth.token}`,
+          'Content-Type': 'multipart/form-data',
         },
       })
 
+      queryClient.invalidateQueries({
+        queryKey: ['get'],
+      })
+
       if (response) {
-        queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey.includes('get'),
-        })
         back()
       }
     },

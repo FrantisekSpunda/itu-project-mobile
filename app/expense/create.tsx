@@ -24,7 +24,18 @@ import { useStore } from '@/hooks'
 
 const validationSchema = Yup.object().shape({})
 
-type DeptorValue = { deptor_id: string; price: string }
+export type DeptorValue = { deptor_id: string; price: string }
+
+const StoreForm = () => {
+  const { values } = useFormikContext()
+  const { setStore } = useStore()
+
+  useEffect(() => {
+    setStore('form.expenseCreate', values as any)
+  }, [values])
+
+  return null
+}
 
 export default function ExpenseAdd() {
   const { back } = useRouter()
@@ -36,10 +47,19 @@ export default function ExpenseAdd() {
 
   const [deptorsModal, setDeptorsModal] = useState(false)
 
-  const { setStore } = useStore()
+  const { store, setStore } = useStore()
 
   const postExpense = usePostExpense()
   const handleSubmit = (values: any) => {
+    setStore('form.expenseCreate', {
+      title: '',
+      price: '',
+      description: '',
+      is_draft: false,
+      payer_id: '',
+      deptors: [] as DeptorValue[],
+      currency_id: 1,
+    })
     postExpense(values)
   }
 
@@ -52,17 +72,7 @@ export default function ExpenseAdd() {
       value: String(contact.id),
     })) || []
 
-  const [profile] = useGetUser()
-
-  const initialValues = {
-    title: '',
-    price: '',
-    description: '',
-    is_draft: false,
-    payer_id: contactsOption.find((contact) => contact.caption === profile?.email)?.value || '',
-    deptors: [{ price: '', deptor_id: '' }] as DeptorValue[],
-    currency_id: 1,
-  }
+  const initialValues = useMemo(() => store.form.expenseCreate, [])
 
   const onCloseModal = (values: typeof initialValues) => {
     if (!values.deptors.every((deptor) => deptor.deptor_id && String(deptor.price)))
@@ -97,6 +107,7 @@ export default function ExpenseAdd() {
         <Formik initialValues={initialValues} enableReinitialize validationSchema={validationSchema} onSubmit={handleSubmit}>
           {({ handleChange, setFieldValue, handleBlur, handleSubmit, values, errors, touched, dirty }) => (
             <>
+              <StoreForm />
               <Input
                 name="title"
                 label="Název"
@@ -144,7 +155,7 @@ export default function ExpenseAdd() {
                     {values.deptors
                       .filter((deptor) => deptor.price)
                       .map((deptor, i) => (
-                        <ThemedText key={i}>{deptor.price}</ThemedText>
+                        <ThemedText key={i}>{formatPrice(Number(deptor.price))}</ThemedText>
                       ))}
                   </View>
                 </View>
@@ -256,8 +267,7 @@ export default function ExpenseAdd() {
                 onBlur={handleBlur('description')}
                 error={touched.description && errors.description}
               />
-              <BottomActionBar show={dirty}>
-                <Button type="white" label="Uložit nedokončené" icon={<IconFilePencil />} onPress={() => handleSubmit()} />
+              <BottomActionBar show={values}>
                 <Button type="primary" label="Uložit" icon={<IconCheck />} onPress={() => handleSubmit()} />
               </BottomActionBar>
             </>

@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react'
 import { NestedPaths, TypeFromPath } from '@/types'
 import { getProperty, setProperty } from '@/utils'
+import { DeptorValue } from '@/app/expense/create'
 
 type StoreContextProps = {
   store: typeof initialState
@@ -18,6 +19,15 @@ const initialState = {
   form: {
     unsavedChanges: false,
     bottomActionBar: [] as React.ReactNode,
+    expenseCreate: {
+      title: '',
+      price: '',
+      description: '',
+      is_draft: false,
+      payer_id: '',
+      deptors: [{ price: '', deptor_id: '' }] as DeptorValue[],
+      currency_id: 1,
+    },
   },
   modal: {
     search: false,

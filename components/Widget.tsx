@@ -6,7 +6,7 @@ import { IconArrowNarrowRight, IconCash, IconCoins, IconCreditCard } from '@tabl
 import { View } from 'react-native'
 import { Badge } from './Badge'
 import { Button } from './Button'
-import { Contact, OverviewBalance, useGetOverviewBalance } from '@/api'
+import { Contact, Expense, OverviewBalance, Settlement, useGetOverviewBalance } from '@/api'
 import { formatPrice } from '@/utils'
 
 type WidgetDeptProps = BoxProps & {
@@ -71,24 +71,23 @@ Widget.contact = ({ contact, style, ...rest }: WidgetContactProps) => {
 }
 
 type WidgetSettlementProps = BoxProps & {
-  dept: number
-  contact: { firstName: string; lastName: string }
+  expense: Expense
+  style?: any[]
 }
 
-Widget.settlement = ({ dept, contact, style, ...rest }: WidgetSettlementProps) => {
+Widget.settlement = ({ expense, style, ...rest }: WidgetSettlementProps) => {
   return (
     <Box {...rest} style={[...tw('relative', 'borderGreen'), ...(style instanceof Array ? style : [])]}>
       <IconCash style={tw({ top: 12, position: 'absolute', right: 12 }, 'textGray')} />
       <ThemedText>Vyrovnání 2. 11. 2024</ThemedText>
       <View style={tw('flexRow', 'itemsCenter', 'mT3')}>
         <ThemedText type="heading1" style={tw('mR3')}>
-          {dept > 0 && '+'}
-          {dept}Kč
+          +{formatPrice(expense.price)}
         </ThemedText>
         <View style={tw('flexRow', 'itemsCenter', 'mL2', { gap: 4 })}>
-          <Badge label="Já" />
+          <Badge label={expense.payer.name} />
           <IconArrowNarrowRight size={14} style={tw('textGray')} />
-          <Badge label={`${contact.firstName} ${contact.lastName}`} />
+          <Badge label={expense.deptors[0].deptor.name} />
         </View>
       </View>
     </Box>

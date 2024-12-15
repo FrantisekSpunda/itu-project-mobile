@@ -16,7 +16,7 @@ const validationSchema = Yup.object().shape({
   last_name: Yup.string().required('Příjmení je povinné').min(2, 'Příjmení musí mít alespoň 2 znaky'),
   email: Yup.string().required('Email je povinný').email('Zadejte platný email'),
   bank_iban: Yup.string()
-    .required('Bankovní účet je povinný')
+    .nullable()
     .matches(/^\d{1,10}\/\d{4}$/, 'IBAN musí obsahovat pouze velká písmena a číslice'),
 })
 
@@ -46,6 +46,7 @@ export default function UserProfile() {
             } as User
           }
           enableReinitialize
+          validateOnChange
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >

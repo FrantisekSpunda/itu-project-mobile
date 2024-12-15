@@ -20,7 +20,7 @@ export const SettlementItem = ({ expense, ...rest }: SettlementItemProps) => {
       {...rest}
       style={tw('wFull', 'flexRow', 'justifyBetween', 'itemsCenter', 'borderB', 'borderLightGray', 'p3')}
       onPress={(e) => {
-        push('/')
+        push(`/settlement/${expense.id}`)
       }}
     >
       <View style={tw('flexRow', 'itemsCenter')}>
@@ -38,9 +38,9 @@ export const SettlementItem = ({ expense, ...rest }: SettlementItemProps) => {
         </View>
       </View>
       <View style={tw('flexRow', 'itemsCenter')}>
-        <ThemedText style={tw({ '-': 'textGreen', '+': 'textRed', '': 'textGray' }[getSign(expense.price_calculated)] as any, 'mR3')}>
-          {expense.price_calculated < 0 && '+'}
-          {formatPrice(expense.price_calculated * -1)}
+        <ThemedText style={tw({ '+': 'textGreen', '-': 'textRed', '': 'textGray' }[getSign(expense.price_calculated)] as any, 'mR3')}>
+          {expense.price_calculated > 0 && '+'}
+          {formatPrice(expense.price_calculated)}
         </ThemedText>
       </View>
     </TouchableOpacity>

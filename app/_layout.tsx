@@ -70,7 +70,7 @@ export default function RootLayout() {
               <Stack.Screen name="contact/[contact_id]" options={{ headerShown: false }} />
 
               <Stack.Screen name="settlement/create/[contact_id]" options={{ headerShown: false }} />
-              <Stack.Screen name="settlement/[settlement_id]" options={{ headerShown: false }} />
+              <Stack.Screen name="settlement/[expense_id]" options={{ headerShown: false }} />
 
               <Stack.Screen name="user_profile" options={{ headerShown: false }} />
               <Stack.Screen name="login" options={{ headerShown: false }} />
