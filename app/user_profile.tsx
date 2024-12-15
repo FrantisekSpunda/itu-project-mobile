@@ -16,9 +16,10 @@ const validationSchema = Yup.object().shape({
   first_name: Yup.string().required('Jméno je povinné').min(2, 'Jméno musí mít alespoň 2 znaky'),
   last_name: Yup.string().required('Příjmení je povinné').min(2, 'Příjmení musí mít alespoň 2 znaky'),
   email: Yup.string().required('Email je povinný').email('Zadejte platný email'),
-  bank_iban: Yup.string()
+  bank_account: Yup.string()
     .nullable()
     .matches(/^\d{1,10}\/\d{4}$/, 'IBAN musí obsahovat pouze velká písmena a číslice'),
+  bank_iban: Yup.string().nullable(),
 })
 
 /**
@@ -44,6 +45,7 @@ export default function UserProfile() {
               first_name: user?.first_name || '',
               last_name: user?.last_name || '',
               email: user?.email || '',
+              bank_account: user?.bank_account || '',
               bank_iban: user?.bank_iban || '',
             } as User
           }
@@ -86,8 +88,18 @@ export default function UserProfile() {
               />
               <Input
                 ref={bankAccountRef}
-                name="bank_iban"
+                name="bank_account"
                 label="Váš bankovní účet"
+                value={values.bank_account || undefined}
+                inputProps={{ onSubmitEditing: () => handleSubmit() }}
+                onChange={handleChange('bank_account')}
+                onBlur={handleBlur('bank_account')}
+                error={touched.bank_account && errors.bank_account}
+              />
+              <Input
+                ref={bankAccountRef}
+                name="bank_iban"
+                label="IBAN"
                 value={values.bank_iban || undefined}
                 inputProps={{ onSubmitEditing: () => handleSubmit() }}
                 onChange={handleChange('bank_iban')}

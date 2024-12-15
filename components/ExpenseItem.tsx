@@ -5,7 +5,7 @@ import { getSign } from '@/utils/utils.number'
 import { IconCreditCard, IconFilePencil, IconShoppingCart } from '@tabler/icons-react-native'
 import { useRouter } from 'expo-router'
 import { Balance, Contact, Expense } from '@/api/types'
-import { formatPrice } from '@/utils'
+import { formatPrice, truncateText } from '@/utils'
 
 type ExpenseItemProps = TouchableOpacityProps & {
   expense: Expense
@@ -31,7 +31,7 @@ export const ExpenseItem = ({ expense, ...rest }: ExpenseItemProps) => {
           <View style={tw({ opacity: 0.1 }, 'absolute', 'top0', 'roundedFull', 'left0', 'wFull', 'hFull', 'bgPrimary')} />
         </View>
         <View style={tw({ gap: 4 }, 'flexRow', 'itemsBaseline')}>
-          <ThemedText>{expense.title}</ThemedText>
+          <ThemedText>{truncateText(expense.title, 31 - expense.payer.name.length)}</ThemedText>
           <ThemedText type="caption">{!expense.is_draft ? expense.payer.name : 'Nedokončené'}</ThemedText>
         </View>
       </View>
