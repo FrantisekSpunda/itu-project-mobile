@@ -9,6 +9,9 @@ import { TextInput, View } from 'react-native'
 import { ThemedText } from '@/components/ThemedText'
 import { useGetExpense } from '@/api'
 
+/**
+ * Settlement detail page
+ */
 export default function SettlementAdd() {
   const { back } = useRouter()
 

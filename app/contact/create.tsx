@@ -28,7 +28,7 @@ export default function ContactAdd() {
     <Layout scrollEnabled={false}>
       <Heading text="Přidat kontakt" showSearch={false} />
       <Box label="Základní informace" style={tw('borderBlue', { gap: 12 })}>
-        <Formik initialValues={initialValues} enableReinitialize onSubmit={handleSubmit}>
+        <Formik initialValues={initialValues} enableReinitialize onSubmit={handleSubmit} validationSchema={validationSchema}>
           {({ handleSubmit, setFieldValue, values, errors, touched, dirty }) => (
             <>
               <Select

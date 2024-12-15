@@ -1,7 +1,6 @@
 import { tailwind } from 'react-native-tailwindcss'
 import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native'
 
-type NamedStyles<T> = { [P in keyof T]: ViewStyle | TextStyle | ImageStyle }
 type Colors = 'Black' | 'White' | 'Primary' | 'Green' | 'Red' | 'Gray' | 'Background' | 'LightGray' | 'Secondary' | 'Blue' | 'LightBlue'
 type PropertyColor = 'border' | 'text' | 'bg'
 
@@ -17,6 +16,11 @@ type TailwindClass =
   | 'textBody2'
   | 'textCaption'
 
+/**
+ * Tailwind utility function
+ * @param styles
+ * @returns
+ */
 export const tw = (...styles: (TailwindClass | ViewStyle | TextStyle | ImageStyle)[]) => {
   return styles.map((style) => {
     if (typeof style == 'string') return tailwind[style as keyof typeof tailwind]
@@ -24,6 +28,11 @@ export const tw = (...styles: (TailwindClass | ViewStyle | TextStyle | ImageStyl
   })
 }
 
+/**
+ * Get hex code of color from tailwind
+ * @param color
+ * @returns
+ */
 export const getColor = (color: Colors): string => {
   return (tailwind as any)[`bg${color}`]['backgroundColor']
 }

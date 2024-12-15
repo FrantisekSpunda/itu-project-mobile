@@ -2,13 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Layout, Heading, Button, Box, Input, BottomActionBar, Select, SelectRef, ThemedText, UserImage, Badge, FlashMessage } from '@/components'
 import { tw } from '@/utils/utils.tailwind'
 import * as Yup from 'yup'
-import { Formik, FormikContextType, useFormikContext } from 'formik'
-import { useRouter } from 'expo-router'
+import { Formik, useFormikContext } from 'formik'
 import {
   IconCheck,
   IconCoins,
   IconExclamationCircleFilled,
-  IconFilePencil,
   IconHeading,
   IconPencil,
   IconPlus,
@@ -17,12 +15,23 @@ import {
   IconUserDollar,
   IconX,
 } from '@tabler/icons-react-native'
-import { Modal, ScrollView, TextInput, View, Image, TouchableOpacity } from 'react-native'
-import { useGetContacts, useGetUser, usePostExpense } from '@/api/api.helpers'
+import { Modal, ScrollView, TextInput, View, TouchableOpacity } from 'react-native'
+import { useGetContacts, usePostExpense } from '@/api/api.helpers'
 import { formatPrice } from '@/utils'
 import { useStore } from '@/hooks'
 
-const validationSchema = Yup.object().shape({})
+const validationSchema = Yup.object().shape({
+  title: Yup.string().required('Pole je povinné'),
+  price: Yup.number().required('Pole je povinné'),
+  description: Yup.string().optional(),
+  payer_id: Yup.string().required('Pole je povinné'),
+  deptors: Yup.array().of(
+    Yup.object().shape({
+      deptor_id: Yup.string().required('Pole je povinné'),
+      price: Yup.number().required('Pole je povinné'),
+    })
+  ),
+})
 
 export type DeptorValue = { deptor_id: string; price: string }
 
@@ -37,9 +46,10 @@ const StoreForm = () => {
   return null
 }
 
+/**
+ * Page to add new expense
+ */
 export default function ExpenseAdd() {
-  const { back } = useRouter()
-
   const priceRef = useRef<TextInput>(null)
   const descriptionRef = useRef<TextInput>(null)
   const deptorsRef = useRef<View>(null)

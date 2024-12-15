@@ -150,11 +150,11 @@ export const useGetContactsUsers = (search: string) => {
   return [users, response] as [typeof users, typeof response]
 }
 
-export const useGetExpenses = (type?: 'all' | 'payment' | 'settlement') => {
+export const useGetExpenses = (type?: 'all' | 'payment' | 'settlement', search?: string) => {
   const { store } = useStore()
 
   const response = useQuery({
-    queryKey: ['get', 'expenses', type],
+    queryKey: ['get', 'expenses', type, search],
     staleTime: 0,
     queryFn: () =>
       Api.get('expenses', {
@@ -163,6 +163,7 @@ export const useGetExpenses = (type?: 'all' | 'payment' | 'settlement') => {
         },
         params: {
           type: type === 'all' ? '' : type,
+          search: search || '',
         },
       }),
     enabled: !!store.auth.token,

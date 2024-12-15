@@ -5,6 +5,8 @@ import { IconSearch, IconArrowLeft } from '@tabler/icons-react-native'
 import { useRouter } from 'expo-router'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useStore } from '@/hooks'
+import { SearchModal } from './SearchModal'
+import { useState } from 'react'
 
 type HeadingProps = ViewProps & {
   text: string
@@ -12,15 +14,18 @@ type HeadingProps = ViewProps & {
   showBack?: boolean
 }
 
+/**
+ * Heading with search and back button
+ */
 export const Heading = ({ text, showSearch = true, showBack = true }: HeadingProps) => {
   const { back } = useRouter()
-  const { setStore } = useStore()
+  const [searchModal, setSearchModal] = useState(false)
 
   return (
     <View style={tw('flexRow', 'justifyBetween', 'wFull')}>
       <ThemedText type="heading1">{text}</ThemedText>
       <View style={tw('flexRow', 'itemsCenter')}>
-        {showSearch && <IconSearch size={24} style={tw('textBlack')} onPress={() => setStore('modal.search', true)} />}
+        {showSearch && <IconSearch size={24} style={tw('textBlack')} onPress={() => setSearchModal(true)} />}
         {showBack && (
           <TouchableOpacity
             onPress={() => {
@@ -31,6 +36,7 @@ export const Heading = ({ text, showSearch = true, showBack = true }: HeadingPro
           </TouchableOpacity>
         )}
       </View>
+      <SearchModal show={searchModal} setShow={setSearchModal} />
     </View>
   )
 }

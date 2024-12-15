@@ -5,12 +5,13 @@ import * as Yup from 'yup'
 import { Formik } from 'formik'
 import { User } from '@/api/types'
 import { useRouter } from 'expo-router'
-import { IconCheck } from '@tabler/icons-react-native'
 import { TextInput } from 'react-native-gesture-handler'
-import { dbLocalData } from '@/api/db'
 import { useGetUser, usePutUser } from '@/api/api.helpers'
 import { AutoSubmit } from './../components/AutoSubmit'
 
+/**
+ * Validation schema for user profile form
+ */
 const validationSchema = Yup.object().shape({
   first_name: Yup.string().required('Jméno je povinné').min(2, 'Jméno musí mít alespoň 2 znaky'),
   last_name: Yup.string().required('Příjmení je povinné').min(2, 'Příjmení musí mít alespoň 2 znaky'),
@@ -20,9 +21,10 @@ const validationSchema = Yup.object().shape({
     .matches(/^\d{1,10}\/\d{4}$/, 'IBAN musí obsahovat pouze velká písmena a číslice'),
 })
 
+/**
+ * User profile page to edit user information
+ */
 export default function UserProfile() {
-  const { back } = useRouter()
-
   const [user] = useGetUser()
 
   const lastNameRef = useRef<TextInput>(null)
@@ -50,7 +52,7 @@ export default function UserProfile() {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ handleChange, handleBlur, handleSubmit, values, errors, touched, dirty }) => (
+          {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
             <>
               <AutoSubmit />
               <Input

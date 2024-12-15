@@ -6,6 +6,9 @@ import { useStore } from '@/hooks'
 import { useEffect } from 'react'
 import { IconAlertCircle } from '@tabler/icons-react-native'
 
+/**
+ * Alert user about unsaved changes in form
+ */
 export const UnsavedChanges = () => {
   const formik = useFormikContext()
   const { setStore } = useStore()

@@ -4,6 +4,9 @@ import { ThemedText } from './ThemedText'
 import { tw } from '@/utils/utils.tailwind'
 import React, { JSXElementConstructor, ReactElement } from 'react'
 
+/**
+ * Styles for different button types
+ */
 const typeStyles = {
   primary: {
     container: tw('bgPrimary', 'pX4', 'pY2'),
@@ -33,6 +36,9 @@ export type ButtonProps = TouchableOpacityProps & {
   style?: any[]
 }
 
+/**
+ * Button component
+ */
 export const Button = ({ label, icon, iconAfter, type, style, ...rest }: ButtonProps) => {
   // Clone icon
   const Icon = !!icon

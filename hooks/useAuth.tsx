@@ -7,6 +7,10 @@ import { getAuthToken, removeAuthToken, saveAuthToken } from '@/utils'
 import { CallbackRes } from '@/types'
 import { useRouter, useSegments } from 'expo-router'
 
+/**
+ * Utility functions fro authentication
+ * @returns
+ */
 export const useAuth = () => {
   const { setStore } = useStore()
   const { push } = useRouter()
@@ -21,6 +25,10 @@ export const useAuth = () => {
   return { logout }
 }
 
+/**
+ * Authentication via Google
+ * @returns
+ */
 export const useAuthGoogle = () => {
   const segments = useSegments()
   const publicPages = ['login', 'register']

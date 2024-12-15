@@ -6,6 +6,9 @@ import { useEffect } from 'react'
 
 type FlashMessageProps = {}
 
+/**
+ * Component for displaying flash messages
+ */
 export const FlashMessage = ({}: FlashMessageProps) => {
   const {
     store: {

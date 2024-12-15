@@ -38,6 +38,7 @@ export const Select = forwardRef(
     const [optionsVisible, setOptionsVisible] = useState(false)
     const [filled, setFilled] = useState(false)
 
+    // Manage state of select depending on user actions
     const setState = useCallback(
       (focused: boolean, value?: boolean) => {
         setFilled(!!(focused || value))
@@ -46,7 +47,7 @@ export const Select = forwardRef(
       [value]
     )
 
-    // Change select state
+    // Change select value if initial values is changed. For example if values for form are loaded
     useEffect(() => {
       setState(false, !!value)
     }, [formik.initialValues[name]])
@@ -70,6 +71,7 @@ export const Select = forwardRef(
       }
     }
 
+    // Filter options depending on params of select
     const optionsEdited = useMemo(() => {
       if (multiple) {
         const optionsFiltered = options.filter((option) => !(value as string[]).find((v) => v === option.value))

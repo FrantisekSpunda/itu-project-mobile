@@ -17,6 +17,9 @@ const validationSchema = Yup.object().shape({
   email: Yup.string().required('Email je povinný').email('Zadejte platný email'),
 })
 
+/**
+ * Log in page
+ */
 export default function Login() {
   const { push } = useRouter()
 
@@ -57,6 +60,7 @@ export default function Login() {
               <Input
                 name="email"
                 label="Váš email"
+                readOnly
                 inputProps={{
                   inputMode: 'email',
                   autoFocus: true,
@@ -70,6 +74,7 @@ export default function Login() {
                 ref={inputRef}
                 name="password"
                 label="Vaše heslo"
+                readOnly
                 inputProps={{ secureTextEntry: true, onSubmitEditing: () => handleSubmit() }}
                 onChange={handleChange('password')}
                 onBlur={handleBlur('password')}

@@ -2,9 +2,9 @@ import { tw } from '@/utils/utils.tailwind'
 import { TouchableOpacity, View, ViewProps, Image } from 'react-native'
 import { ThemedText } from '@/components/ThemedText'
 import { IconCreditCard, IconExclamationCircleFilled } from '@tabler/icons-react-native'
-import { useNavigation, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { Contact } from '@/api/types'
-import { formatPrice, getAvatar } from '@/utils'
+import { formatPrice } from '@/utils'
 import { UserImage } from './UserImage'
 import { useStore } from '@/hooks'
 
@@ -12,6 +12,9 @@ type ContactItemProps = ViewProps & {
   contact: Contact
 }
 
+/**
+ * Contact item used unside list
+ */
 export const ContactItem = ({ contact, ...rest }: ContactItemProps) => {
   const { setStore } = useStore()
   const { push } = useRouter()

@@ -17,6 +17,9 @@ export const Widget = () => {
   return <ThemedText>Zvolte widget</ThemedText>
 }
 
+/**
+ * Widget for overview balance
+ */
 Widget.dept = ({ buttons, style, ...rest }: WidgetDeptProps) => {
   const [balance] = useGetOverviewBalance()
 
@@ -26,7 +29,7 @@ Widget.dept = ({ buttons, style, ...rest }: WidgetDeptProps) => {
         <IconCoins style={tw({ top: 12, position: 'absolute', right: 12 }, 'textGray')} />
         <ThemedText>Celkový dluh</ThemedText>
         <View style={tw('flexRow', 'itemsBaseline', 'mT3')}>
-          <ThemedText type="heading1" style={tw('textGreen', 'mR3')}>
+          <ThemedText type="heading1" style={tw({ '+': 'textGreen', '-': 'textRed', '': 'textGray' }[getSign(balance?.balance || 0)] as any, 'mR3')}>
             {(balance?.balance || 0) > 0 && '+'}
             {formatPrice(balance?.balance || 0)}
           </ThemedText>
@@ -47,6 +50,9 @@ type WidgetContactProps = BoxProps & {
   contact: Contact
 }
 
+/**
+ * Widget for contact balance
+ */
 Widget.contact = ({ contact, style, ...rest }: WidgetContactProps) => {
   return (
     <Box {...rest} style={[...tw('relative', 'p0', 'borderBlue'), ...(style instanceof Array ? style : [])]}>
@@ -75,6 +81,9 @@ type WidgetSettlementProps = BoxProps & {
   style?: any[]
 }
 
+/**
+ * Widget for settlement
+ */
 Widget.settlement = ({ expense, style, ...rest }: WidgetSettlementProps) => {
   return (
     <Box {...rest} style={[...tw('relative', 'borderGreen'), ...(style instanceof Array ? style : [])]}>

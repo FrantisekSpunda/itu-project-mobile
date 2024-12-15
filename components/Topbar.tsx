@@ -7,6 +7,9 @@ import { useRouter } from 'expo-router'
 import { ThemedText } from './ThemedText'
 import { useAuth } from '@/hooks'
 
+/**
+ * Topbar for logged in users
+ */
 export const TopBar = () => {
   const { push } = useRouter()
   const { logout } = useAuth()
@@ -38,6 +41,9 @@ export const TopBar = () => {
   )
 }
 
+/**
+ * Topbar for logged out users
+ */
 TopBar.login = () => {
   return (
     <View style={tw('bgWhite')}>

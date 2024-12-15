@@ -4,7 +4,6 @@ import { TopBar } from './Topbar'
 import { BottomAddButton } from './BottomAddButton'
 import { BottomActionBar } from './BottomActionBar'
 import { ThemedText } from './ThemedText'
-import { SearchModal } from './SearchModal'
 import { useAuthGoogle, useStore } from '@/hooks'
 import React from 'react'
 import { FlashMessage } from './FlashMessage'
@@ -13,6 +12,13 @@ type LayoutProps = ViewProps & {
   scrollEnabled?: boolean
 }
 
+/**
+ * Layout component for the app.
+ * @param scrollEnabled - Whether the scroll view should be enabled.
+ * @param children - The children to be rendered inside the layout.
+ * @param rest - The rest of the props to be passed to the View component.
+ * @returns The Layout component.
+ */
 export const Layout = ({ scrollEnabled = true, children, ...rest }: LayoutProps) => {
   const { store } = useStore()
   useAuthGoogle()
@@ -20,15 +26,9 @@ export const Layout = ({ scrollEnabled = true, children, ...rest }: LayoutProps)
   return (
     <View {...rest} style={tw('wFull', 'hFull', 'bgBackground', 'relative')}>
       <TopBar />
-      <ScrollView
-        contentContainerStyle={tw({ rowGap: 16 }, 'flexCol', 'p4', 'pB20', 'wFull', 'minHFull')}
-        scrollEnabled={scrollEnabled && Object.values(store.modal).every((v) => !v)}
-      >
-        {children}
-      </ScrollView>
+      <ScrollView contentContainerStyle={tw({ rowGap: 16 }, 'flexCol', 'p4', 'pB20', 'wFull', 'minHFull')}>{children}</ScrollView>
       <BottomAddButton />
       <FlashMessage />
-      <SearchModal />
       <View style={tw('absolute', { bottom: 0, left: 0 })}>
         {/* <UnsavedChanges.Provider /> */}
         <BottomActionBar.Provider />
@@ -37,6 +37,12 @@ export const Layout = ({ scrollEnabled = true, children, ...rest }: LayoutProps)
   )
 }
 
+/**
+ * Layout component for the login screen.
+ * @param children - The children to be rendered inside the layout.
+ * @param rest - The rest of the props to be passed to the View component.
+ * @returns The Layout component.
+ */
 Layout.login = ({ children, ...rest }: LayoutProps) => {
   const {
     store: {

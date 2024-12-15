@@ -22,6 +22,9 @@ type UserImageProps = ViewProps & {
   size?: keyof typeof sizes
 }
 
+/**
+ * User image component. Return google avatar or first letter of first name and last name
+ */
 export const UserImage = ({ contact, style, size = 'default', ...rest }: UserImageProps) => {
   return (
     <View

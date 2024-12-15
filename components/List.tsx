@@ -9,6 +9,9 @@ type ListProps = ViewProps & {
   buttons?: React.ReactNode
 }
 
+/**
+ * List of expenses, settlements or contacts
+ */
 export const List = ({ label, children, buttons, ...rest }: ListProps) => {
   return (
     <View>

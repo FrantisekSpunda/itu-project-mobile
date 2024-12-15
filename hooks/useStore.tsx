@@ -29,9 +29,6 @@ const initialState = {
       currency_id: 1,
     },
   },
-  modal: {
-    search: false,
-  },
   flashMessage: {
     show: false,
     style: [],

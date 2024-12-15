@@ -20,13 +20,15 @@ type InputPros = ViewProps & {
   readOnly?: boolean
 }
 
+/**
+ * Input component
+ */
 export const Input = forwardRef<TextInput, InputPros>(
   ({ name, type = 'off', readOnly, inputProps = {}, containerProps = {}, label, icon, value, onChange, onBlur, error, focusNext, ...rest }, globalRef) => {
     const ref = useRef<TextInput>(null)
 
     useImperativeHandle(globalRef, () => ref.current as TextInput)
 
-    const formik = useFormikContext<{ [key: string]: any }>()
     const [filled, setFilled] = useState(!!value)
 
     // Change input state

@@ -7,6 +7,9 @@ import { ThemedText } from '@/components/ThemedText'
 import { usePostSettlementsMarkAsPaid, usePostSettlementsPreview } from '@/api'
 import { formatPrice } from '@/utils'
 
+/**
+ * Settlement page to add new settlement between users
+ */
 export default function SettlementAdd() {
   const { back } = useRouter()
   const { contact_id } = useLocalSearchParams<{ contact_id: string }>()

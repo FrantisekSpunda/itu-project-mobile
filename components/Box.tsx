@@ -7,6 +7,9 @@ export type BoxProps = ViewProps & {
   style?: any[]
 }
 
+/**
+ * Box with label and content
+ */
 export const Box = ({ label, style = [], children, ...rest }: BoxProps) => {
   return (
     <View style={tw('flexCol', { gap: 8 })}>

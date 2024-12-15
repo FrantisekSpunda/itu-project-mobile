@@ -11,6 +11,9 @@ type ExpenseItemProps = TouchableOpacityProps & {
   expense: Expense
 }
 
+/**
+ * Expense item used unside list
+ */
 export const ExpenseItem = ({ expense, ...rest }: ExpenseItemProps) => {
   const { push } = useRouter()
 

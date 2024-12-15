@@ -3,6 +3,9 @@ import { IconPlus } from '@tabler/icons-react-native'
 import { useNavigation, useRouter } from 'expo-router'
 import { TouchableOpacity } from 'react-native'
 
+/**
+ * Floating button to add new expense
+ */
 export const BottomAddButton = () => {
   const { push } = useRouter()
   const navigation = useNavigation()

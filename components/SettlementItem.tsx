@@ -12,6 +12,9 @@ type SettlementItemProps = TouchableOpacityProps & {
   expense: Expense
 }
 
+/**
+ * Settlement item used unside list
+ */
 export const SettlementItem = ({ expense, ...rest }: SettlementItemProps) => {
   const { push } = useRouter()
 

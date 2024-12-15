@@ -1,8 +1,10 @@
 import { Text, type TextProps } from 'react-native'
 
-import { useThemeColor } from '@/hooks/useThemeColor'
 import { tw } from '@/utils/utils.tailwind'
 
+/**
+ * Text with predefined styles
+ */
 const styles = {
   title: tw('textTitle', 'fontBold', 'textBlack'),
   heading1: tw('textHeading1', 'fontBold', 'textBlack'),
@@ -18,8 +20,9 @@ export type ThemedTextProps = TextProps & {
   type?: keyof typeof styles
 }
 
+/**
+ * Text with predefined styles
+ */
 export function ThemedText({ style, lightColor, darkColor, type = 'body1', ...rest }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text')
-
-  return <Text style={[{ color }, styles[type], style]} {...rest} />
+  return <Text style={[styles[type], style]} {...rest} />
 }

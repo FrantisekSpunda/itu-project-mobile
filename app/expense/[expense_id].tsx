@@ -11,7 +11,6 @@ import { useGetExpense } from '@/api'
 import { formatPrice } from '@/utils'
 
 export default function SettlementAdd() {
-  const { back } = useRouter()
   const { expense_id } = useLocalSearchParams<{ expense_id: string }>()
 
   const [expense] = useGetExpense(Number(expense_id))

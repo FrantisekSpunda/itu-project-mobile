@@ -1,6 +1,10 @@
 import { AUTH_TOKEN_STORAGE_KEY } from '@/config'
 import * as SecureStore from 'expo-secure-store'
 
+/**
+ * Saves auth token to secure storage
+ * @param token
+ */
 export const saveAuthToken = async (token: string) => {
   try {
     await SecureStore.setItemAsync(AUTH_TOKEN_STORAGE_KEY, token, {
@@ -11,6 +15,11 @@ export const saveAuthToken = async (token: string) => {
   }
 }
 
+/**
+ * Get auth token from secure storage
+ *
+ * @returns token as string or null
+ */
 export const getAuthToken = async () => {
   try {
     const token = await SecureStore.getItemAsync(AUTH_TOKEN_STORAGE_KEY)
@@ -21,6 +30,10 @@ export const getAuthToken = async () => {
   }
 }
 
+/**
+ * Remove auth token from secure storage
+ * @returns
+ */
 export const removeAuthToken = async () => {
   try {
     await SecureStore.deleteItemAsync(AUTH_TOKEN_STORAGE_KEY)
